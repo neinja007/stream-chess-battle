@@ -5,6 +5,11 @@ import { useState } from 'react';
 
 export default function Home() {
 	const [status, setStatus] = useState<'idle' | 'playing'>('idle');
+	const [moveSelection, setMoveSelection] = useState<'mostVotes' | 'weightedRandom' | 'random'>('mostVotes');
+	const [whoPlaysWhite, setWhoPlaysWhite] = useState<'twitch' | 'youtube'>('twitch');
+	const [timePerMove, setTimePerMove] = useState<number>(30);
+	const [evaluationBar, setEvaluationBar] = useState<'show' | 'hide'>('show');
+
 	return (
 		<div className='p-20 text-xl'>
 			<Heading />
@@ -22,7 +27,11 @@ export default function Home() {
 					<hr className='my-3 border-blue-500' />
 					<div className='flex justify-between items-center'>
 						<div>Move Selection</div>
-						<select className='text-white rounded-md p-2'>
+						<select
+							className='text-white rounded-md p-2'
+							value={moveSelection}
+							onChange={(e) => setMoveSelection(e.target.value as 'mostVotes' | 'weightedRandom' | 'random')}
+						>
 							<option className='bg-gray-800' value='white'>
 								Most Votes
 							</option>
@@ -37,7 +46,11 @@ export default function Home() {
 					<hr className='my-3 border-blue-500' />
 					<div className='flex justify-between items-center'>
 						<div>Who plays White?</div>
-						<select className='text-white rounded-md p-2'>
+						<select
+							className='text-white rounded-md p-2'
+							value={whoPlaysWhite}
+							onChange={(e) => setWhoPlaysWhite(e.target.value as 'twitch' | 'youtube')}
+						>
 							<option className='bg-gray-800' value='twitch'>
 								Twitch
 							</option>
@@ -49,7 +62,11 @@ export default function Home() {
 					<hr className='my-3 border-blue-500' />
 					<div className='flex justify-between items-center'>
 						<div>Time per Move</div>
-						<select className='text-white rounded-md p-2'>
+						<select
+							className='text-white rounded-md p-2'
+							value={timePerMove}
+							onChange={(e) => setTimePerMove(Number(e.target.value))}
+						>
 							<option className='bg-gray-800' value='10'>
 								10s
 							</option>
@@ -67,7 +84,11 @@ export default function Home() {
 					<hr className='my-3 border-blue-500' />
 					<div className='flex justify-between items-center'>
 						<div>Evaluation Bar</div>
-						<select className='text-white rounded-md p-2'>
+						<select
+							className='text-white rounded-md p-2'
+							value={evaluationBar}
+							onChange={(e) => setEvaluationBar(e.target.value as 'show' | 'hide')}
+						>
 							<option className='bg-gray-800' value='show'>
 								Show
 							</option>
