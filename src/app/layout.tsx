@@ -1,6 +1,6 @@
 import type { Metadata } from 'next';
-import { Roboto } from 'next/font/google';
 import './globals.css';
+import { Roboto } from 'next/font/google';
 
 const roboto = Roboto({
 	subsets: ['latin'],
@@ -19,9 +19,7 @@ export default function RootLayout({
 }>) {
 	return (
 		<html lang='en'>
-			<body className='font-sans antialiased bg-gradient-to-br from-purple-950 to-pink-950 h-full min-h-screen'>
-				{children}
-			</body>
+			<body className={`${roboto.variable} font-roboto antialiased text-black h-full min-h-screen`}>{children}</body>
 		</html>
 	);
 }

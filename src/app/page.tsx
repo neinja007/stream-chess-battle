@@ -3,6 +3,7 @@
 import { Heading } from '@/components/heading';
 import { useState } from 'react';
 import { Chessboard } from 'react-chessboard';
+import Image from 'next/image';
 
 export default function Home() {
 	const [status, setStatus] = useState<'idle' | 'playing'>('idle');
@@ -11,7 +12,7 @@ export default function Home() {
 	const [timePerMove, setTimePerMove] = useState<number>(30);
 	const [evaluationBar, setEvaluationBar] = useState<'show' | 'hide'>('show');
 
-	const [game, setGame] = useState<string>('rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1');
+	const [game] = useState<string>('rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1');
 
 	return (
 		<div className='py-5 px-20 text-xl'>
@@ -21,7 +22,7 @@ export default function Home() {
 					<div className='flex justify-between items-center'>
 						<div className='font-bold'>Game Settings</div>
 						<button
-							className='text-white rounded-md py-1 px-2 bg-black/20 hover:bg-black/50 cursor-pointer'
+							className='text-white rounded-md py-1 px-2 bg-blue-500 hover:bg-blue-600 cursor-pointer'
 							onClick={() => setStatus('playing')}
 						>
 							Start Game
@@ -31,91 +32,65 @@ export default function Home() {
 					<div className='flex justify-between items-center'>
 						<div>Move Selection</div>
 						<select
-							className='text-white rounded-md p-2'
+							className='rounded-md p-2'
 							value={moveSelection}
 							onChange={(e) => setMoveSelection(e.target.value as 'mostVotes' | 'weightedRandom' | 'random')}
 						>
-							<option className='bg-gray-800' value='white'>
-								Most Votes
-							</option>
-							<option className='bg-gray-800' value='weightedRandom'>
-								Weighted Random
-							</option>
-							<option className='bg-gray-800' value='random'>
-								Random
-							</option>
+							<option value='mostVotes'>Most Votes</option>
+							<option value='weightedRandom'>Weighted Random</option>
+							<option value='random'>Random</option>
 						</select>
 					</div>
 					<hr className='my-3 border-blue-500' />
 					<div className='flex justify-between items-center'>
 						<div>Who plays White?</div>
 						<select
-							className='text-white rounded-md p-2'
+							className='rounded-md p-2'
 							value={whoPlaysWhite}
 							onChange={(e) => setWhoPlaysWhite(e.target.value as 'twitch' | 'youtube')}
 						>
-							<option className='bg-gray-800' value='twitch'>
-								Twitch
-							</option>
-							<option className='bg-gray-800' value='youtube'>
-								YouTube
-							</option>
+							<option value='twitch'>Twitch</option>
+							<option value='youtube'>YouTube</option>
 						</select>
 					</div>
 					<hr className='my-3 border-blue-500' />
 					<div className='flex justify-between items-center'>
 						<div>Pay to Win?</div>
-						<select className='text-white rounded-md p-2'>
-							<option className='bg-gray-800' value='twitch'>
-								1$ = 1 Point of Material
-							</option>
-							<option className='bg-gray-800' value='youtube'>
-								Free to Play
-							</option>
+						<select className='rounded-md p-2'>
+							<option value='twitch'>1$ = 1 Point of Material</option>
+							<option value='youtube'>Free to Play</option>
 						</select>
 					</div>
 					<hr className='my-3 border-blue-500' />
 					<div className='flex justify-between items-center'>
 						<div>Time per Move</div>
 						<select
-							className='text-white rounded-md p-2'
+							className='rounded-md p-2'
 							value={timePerMove}
 							onChange={(e) => setTimePerMove(Number(e.target.value))}
 						>
-							<option className='bg-gray-800' value='10'>
-								10s
-							</option>
-							<option className='bg-gray-800' value='15'>
-								15s
-							</option>
-							<option className='bg-gray-800' value='30'>
-								30s
-							</option>
-							<option className='bg-gray-800' value='60'>
-								60s
-							</option>
+							<option value='10'>10s</option>
+							<option value='15'>15s</option>
+							<option value='30'>30s</option>
+							<option value='60'>60s</option>
 						</select>
 					</div>
 					<hr className='my-3 border-blue-500' />
 					<div className='flex justify-between items-center'>
 						<div>Evaluation Bar</div>
 						<select
-							className='text-white rounded-md p-2'
+							className='rounded-md p-2'
 							value={evaluationBar}
 							onChange={(e) => setEvaluationBar(e.target.value as 'show' | 'hide')}
 						>
-							<option className='bg-gray-800' value='show'>
-								Show
-							</option>
-							<option className='bg-gray-800' value='hide'>
-								Hide
-							</option>
+							<option value='show'>Show</option>
+							<option value='hide'>Hide</option>
 						</select>
 					</div>
 				</div>
 			)}
 			{status === 'playing' && (
-				<div className='w-full flex gap-5'>
+				<div className='w-full flex gap-5 mt-10'>
 					<div className='w-[700px]'>
 						<Chessboard
 							options={{
@@ -133,7 +108,42 @@ export default function Home() {
 								},
 								showNotation: true,
 								showAnimations: true,
-								allowDrawingArrows: false
+								allowDrawingArrows: false,
+								squareRenderer: ({ piece, children }) => {
+									if (piece) {
+										const isTwitchPiece =
+											(piece.pieceType.startsWith('w') ? 1 : 0) ^ (whoPlaysWhite === 'twitch' ? 1 : 0);
+										return (
+											<div
+												style={{
+													position: 'relative',
+													width: '100%',
+													height: '100%',
+													display: 'flex',
+													alignItems: 'center',
+													justifyContent: 'center'
+												}}
+											>
+												{children}
+												<Image
+													src={isTwitchPiece ? '/twitch.png' : '/youtube.png'}
+													alt={isTwitchPiece ? 'Twitch' : 'YouTube'}
+													width={isTwitchPiece ? 30 : 25}
+													height={isTwitchPiece ? 30 : 25}
+													style={{
+														position: 'absolute',
+														bottom: '10%',
+														right: isTwitchPiece ? '5%' : '10%',
+														opacity: 1,
+														pointerEvents: 'none',
+														zIndex: 5
+													}}
+												/>
+											</div>
+										);
+									}
+									return <>{children}</>;
+								}
 							}}
 						/>
 					</div>

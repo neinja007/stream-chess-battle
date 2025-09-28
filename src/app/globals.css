@@ -1,15 +1,5 @@
 @import 'tailwindcss';
 
-:root {
-	--foreground: #ffffff;
-}
-
-@theme inline {
-	--color-foreground: var(--foreground);
-	--font-sans: var(--font-roboto);
-}
-
 body {
-	color: var(--foreground);
-	font-family: Arial, Helvetica, sans-serif;
+	font-family: var(--font-roboto);
 }
