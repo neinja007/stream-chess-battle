@@ -19,7 +19,9 @@ export default function RootLayout({
 }>) {
 	return (
 		<html lang='en'>
-			<body className='font-sans antialiased bg-gradient-to-br from-purple-950 to-pink-950 h-screen'>{children}</body>
+			<body className='font-sans antialiased bg-gradient-to-br from-purple-950 to-pink-950 h-full min-h-screen'>
+				{children}
+			</body>
 		</html>
 	);
 }

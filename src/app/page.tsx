@@ -119,7 +119,21 @@ export default function Home() {
 					<div className='w-[700px]'>
 						<Chessboard
 							options={{
-								position: game
+								position: game,
+								animationDurationInMs: 1000,
+								boardOrientation: 'white',
+								allowDragging: false,
+								numericNotationStyle: {
+									fontSize: '16px',
+									fontWeight: 'bold'
+								},
+								alphaNotationStyle: {
+									fontSize: '16px',
+									fontWeight: 'bold'
+								},
+								showNotation: true,
+								showAnimations: true,
+								allowDrawingArrows: false
 							}}
 						/>
 					</div>
