@@ -11,8 +11,8 @@ export const Heading = () => {
 			</div>
 			<div className='text-3xl font-medium flex items-center'>
 				<div className='bg-red-500 rounded-full size-3 mt-1 mr-2' />
-				Live on <span className='text-[#a544ff] mx-2'>twitch.tv/imrosen</span> and{' '}
-				<span className='text-[#ff0100] mx-2'>youtube.com/@eric-rosen</span>
+				Join on <span className='text-[#a544ff] mx-2'>twitch.tv/imrosen</span> or{' '}
+				<span className='text-[#ff0100] ml-2'>youtube.com/@eric-rosen</span>!
 			</div>
 		</div>
 	);
