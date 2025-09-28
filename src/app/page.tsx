@@ -2,6 +2,7 @@
 
 import { Heading } from '@/components/heading';
 import { useState } from 'react';
+import { Chessboard } from 'react-chessboard';
 
 export default function Home() {
 	const [status, setStatus] = useState<'idle' | 'playing'>('idle');
@@ -10,8 +11,10 @@ export default function Home() {
 	const [timePerMove, setTimePerMove] = useState<number>(30);
 	const [evaluationBar, setEvaluationBar] = useState<'show' | 'hide'>('show');
 
+	const [game, setGame] = useState<string>('rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1');
+
 	return (
-		<div className='p-20 text-xl'>
+		<div className='py-5 px-20 text-xl'>
 			<Heading />
 			{status === 'idle' && (
 				<div className='w-full max-w-xl mx-auto mt-5 rounded-lg p-5'>
@@ -61,6 +64,18 @@ export default function Home() {
 					</div>
 					<hr className='my-3 border-blue-500' />
 					<div className='flex justify-between items-center'>
+						<div>Pay to Win?</div>
+						<select className='text-white rounded-md p-2'>
+							<option className='bg-gray-800' value='twitch'>
+								1$ = 1 Point of Material
+							</option>
+							<option className='bg-gray-800' value='youtube'>
+								Free to Play
+							</option>
+						</select>
+					</div>
+					<hr className='my-3 border-blue-500' />
+					<div className='flex justify-between items-center'>
 						<div>Time per Move</div>
 						<select
 							className='text-white rounded-md p-2'
@@ -99,7 +114,17 @@ export default function Home() {
 					</div>
 				</div>
 			)}
-			{status === 'playing' && <div className='text-3xl font-medium'>Playing...</div>}
+			{status === 'playing' && (
+				<div className='w-full flex gap-5'>
+					<div className='w-[700px]'>
+						<Chessboard
+							options={{
+								position: game
+							}}
+						/>
+					</div>
+				</div>
+			)}
 		</div>
 	);
 }
