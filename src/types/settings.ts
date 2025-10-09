@@ -1,9 +1,15 @@
-export type Settings = {
+export type GameSettings = {
 	moveSelection: 'mostVotes' | 'weightedRandom' | 'random' | undefined;
 	playerWhite: Player;
 	playerBlack: Player;
 	secondsPerMove: number;
 	evaluationBar: 'show' | 'hide' | undefined;
+};
+
+export type PlaySettings = {
+	theme: 'standard' | 'blue-purple';
+	squareCoordinates: 'show' | 'hide';
+	boardOrientation: 'white' | 'black';
 };
 
 export type Player = {
