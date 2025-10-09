@@ -10,6 +10,6 @@ export const defaultSettings: Settings = {
 		platform: undefined,
 		channel: ''
 	},
-	secondsPerMove: 30,
-	evaluationBar: 'hide'
+	secondsPerMove: 0,
+	evaluationBar: undefined
 };

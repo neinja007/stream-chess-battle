@@ -3,7 +3,7 @@ export type Settings = {
 	playerWhite: Player;
 	playerBlack: Player;
 	secondsPerMove: number;
-	evaluationBar: 'show' | 'hide';
+	evaluationBar: 'show' | 'hide' | undefined;
 };
 
 export type Player = {
