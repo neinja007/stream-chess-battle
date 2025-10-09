@@ -22,6 +22,12 @@ export const Chessboard = ({ game }: ChessboardProps) => {
 				},
 				showNotation: true,
 				showAnimations: true,
+				darkSquareStyle: {
+					backgroundColor: 'oklch(39.8% 0.195 277.366)'
+				},
+				lightSquareStyle: {
+					backgroundColor: 'oklch(74.6% 0.16 232.661)'
+				},
 				allowDrawingArrows: false
 				// squareRenderer: ({ piece, children }) => {
 				// 	if (piece) {
