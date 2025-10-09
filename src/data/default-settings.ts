@@ -11,5 +11,5 @@ export const defaultSettings: Settings = {
 		channel: ''
 	},
 	secondsPerMove: 0,
-	evaluationBar: undefined
+	evaluationBar: 'show'
 };

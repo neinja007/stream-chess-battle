@@ -12,8 +12,8 @@ export const SettingsProgress = ({ settings }: SettingsProgressProps) => {
 		settings.playerBlack.platform !== undefined,
 		settings.playerWhite.channel !== '',
 		settings.playerBlack.channel !== '',
-		settings.secondsPerMove !== 0,
-		settings.evaluationBar !== undefined
+		settings.secondsPerMove !== 0
+		// settings.evaluationBar !== undefined
 	];
 
 	const completion = settingsCompletion.filter(Boolean).length / settingsCompletion.length;
