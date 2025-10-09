@@ -1,6 +1,7 @@
 import type { Metadata } from 'next';
 import './globals.css';
 import { Roboto } from 'next/font/google';
+import { BackgroundBeams } from '@/components/ui/background-beams';
 
 const roboto = Roboto({
 	subsets: ['latin'],
@@ -19,7 +20,10 @@ export default function RootLayout({
 }>) {
 	return (
 		<html lang='en'>
-			<body className={`${roboto.variable} font-roboto antialiased text-black h-full min-h-screen`}>{children}</body>
+			<body className={`${roboto.variable} font-roboto antialiased bg-black h-full min-h-screen`}>
+				{children}
+				<BackgroundBeams />
+			</body>
 		</html>
 	);
 }
