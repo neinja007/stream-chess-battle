@@ -15,7 +15,7 @@ export const Playing = ({ settings, setStatus }: PlayingProps) => {
 	return (
 		<div className='w-full max-w-7xl mx-auto pt-24 flex flex-col gap-4'>
 			<div className='flex items-center gap-4'>
-				<Evaluation game={game} />
+				{settings.evaluationBar === 'show' && <Evaluation game={game} />}
 				<div className='max-w-xl rounded-xl overflow-hidden'>
 					<Chessboard game={game} />
 				</div>
