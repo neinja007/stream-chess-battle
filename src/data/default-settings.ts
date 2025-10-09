@@ -1,4 +1,4 @@
-import { Settings as DefaultSettings } from '@/types/settings';
+import { GameSettings as DefaultSettings } from '@/types/settings';
 
 export const defaultGameSettings: DefaultSettings = {
 	moveSelection: undefined,

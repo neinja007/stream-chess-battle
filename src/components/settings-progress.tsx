@@ -1,9 +1,9 @@
-import { Settings } from '@/types/settings';
+import { GameSettings } from '@/types/settings';
 import { Progress } from './ui/progress';
 import { getSettingsCompletion } from '@/lib/settings-completion';
 
 type SettingsProgressProps = {
-	settings: Settings;
+	settings: GameSettings;
 };
 
 export const SettingsProgress = ({ settings }: SettingsProgressProps) => {

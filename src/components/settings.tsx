@@ -1,4 +1,4 @@
-import { Settings as SettingsType } from '@/types/settings';
+import { GameSettings as SettingsType } from '@/types/settings';
 import { SettingsProgress } from '@/components/settings-progress';
 import { SettingsSection } from '@/components/settings-section';
 import { SimpleSelect } from '@/components/simple-select';

@@ -1,6 +1,6 @@
-import { Settings } from '@/types/settings';
+import { GameSettings } from '@/types/settings';
 
-export const getSettingsCompletion = (settings: Settings): number => {
+export const getSettingsCompletion = (settings: GameSettings): number => {
 	const settingsCompletion: boolean[] = [
 		settings.moveSelection !== undefined,
 		settings.playerWhite.platform !== undefined,

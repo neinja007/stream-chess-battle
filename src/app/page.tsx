@@ -1,7 +1,7 @@
 'use client';
 
 import { useState } from 'react';
-import { Settings as SettingsType } from '@/types/settings';
+import { GameSettings as SettingsType } from '@/types/settings';
 import { defaultGameSettings } from '@/data/default-settings';
 import { Settings } from '@/components/settings';
 import { Playing } from '@/components/playing';

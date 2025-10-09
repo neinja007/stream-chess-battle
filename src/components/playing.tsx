@@ -1,4 +1,4 @@
-import { Settings as SettingsType } from '@/types/settings';
+import { GameSettings as SettingsType } from '@/types/settings';
 import { useState } from 'react';
 import { Chessboard } from './chessboard';
 import { Evaluation } from './evaluation';
