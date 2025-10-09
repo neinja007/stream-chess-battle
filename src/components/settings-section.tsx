@@ -13,7 +13,7 @@ export const SettingsSection = ({ title, children, completed }: SettingsSectionP
 				<h2 className='text-xl'>{title}</h2>
 				{completed && <CircleCheck className='size-4 text-green-500' />}
 			</div>
-			{children}
+			<div className='flex justify-between items-center gap-3'>{children}</div>
 		</div>
 	);
 };
