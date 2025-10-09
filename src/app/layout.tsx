@@ -3,6 +3,7 @@ import './globals.css';
 import { Roboto } from 'next/font/google';
 import { BackgroundBeams } from '@/components/ui/background-beams';
 import { TanstackQueryProvider } from '@/components/tanstack-query-provider';
+import { Analytics } from '@vercel/analytics/next';
 
 const roboto = Roboto({
 	subsets: ['latin'],
@@ -26,6 +27,7 @@ export default function RootLayout({
 					<main className='z-10'>{children}</main>
 				</TanstackQueryProvider>
 				<BackgroundBeams />
+				<Analytics />
 			</body>
 		</html>
 	);
