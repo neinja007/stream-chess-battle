@@ -1,6 +1,6 @@
-import { Settings } from '@/types/settings';
+import { Settings as DefaultSettings } from '@/types/settings';
 
-export const defaultSettings: Settings = {
+export const defaultGameSettings: DefaultSettings = {
 	moveSelection: undefined,
 	playerWhite: {
 		platform: undefined,

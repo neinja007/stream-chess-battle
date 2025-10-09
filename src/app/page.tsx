@@ -2,17 +2,17 @@
 
 import { useState } from 'react';
 import { Settings as SettingsType } from '@/types/settings';
-import { defaultSettings } from '@/data/default-settings';
+import { defaultGameSettings } from '@/data/default-settings';
 import { Settings } from '@/components/settings';
 import { Playing } from '@/components/playing';
 
 export default function Home() {
 	const [status, setStatus] = useState<'settings' | 'playing'>('settings');
-	const [settings, setSettings] = useState<SettingsType>(defaultSettings);
+	const [gameSettings, setGameSettings] = useState<SettingsType>(defaultGameSettings);
 
 	if (status === 'settings') {
-		return <Settings settings={settings} setSettings={setSettings} setStatus={setStatus} />;
+		return <Settings settings={gameSettings} setSettings={setGameSettings} setStatus={setStatus} />;
 	} else {
-		return <Playing settings={settings} setStatus={setStatus} />;
+		return <Playing settings={gameSettings} setStatus={setStatus} />;
 	}
 }
