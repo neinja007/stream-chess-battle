@@ -21,7 +21,7 @@ export default function RootLayout({
 	return (
 		<html lang='en'>
 			<body className={`${roboto.variable} font-roboto antialiased h-full min-h-screen`}>
-				{children}
+				<main className='z-10'>{children}</main>
 				<BackgroundBeams />
 			</body>
 		</html>
