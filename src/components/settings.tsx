@@ -111,7 +111,33 @@ export const Settings = ({ settings, setSettings, setStatus }: SettingsProps) =>
 					max={120}
 					step={1}
 				/>
-				<div className='text-sm'>{settings.secondsPerMove} seconds per move</div>
+				<div className='text-sm flex justify-between items-center gap-2'>
+					<div>{settings.secondsPerMove} seconds / move</div>
+					<Button
+						size='sm'
+						variant={settings.secondsPerMove === 10 ? 'default' : 'secondary'}
+						className='h-6 px-1.5'
+						onClick={() => setSettings({ ...settings, secondsPerMove: 10 })}
+					>
+						10s
+					</Button>
+					<Button
+						size='sm'
+						variant={settings.secondsPerMove === 15 ? 'default' : 'secondary'}
+						className='h-6 px-1.5'
+						onClick={() => setSettings({ ...settings, secondsPerMove: 15 })}
+					>
+						15s
+					</Button>
+					<Button
+						size='sm'
+						variant={settings.secondsPerMove === 30 ? 'default' : 'secondary'}
+						className='h-6 px-1.5'
+						onClick={() => setSettings({ ...settings, secondsPerMove: 30 })}
+					>
+						30s
+					</Button>
+				</div>
 			</SettingsSection>
 			<SettingsSection title='Evaluation bar' completed={!!settings.evaluationBar} inline>
 				<Switch
