@@ -2,6 +2,7 @@ import type { Metadata } from 'next';
 import './globals.css';
 import { Roboto } from 'next/font/google';
 import { BackgroundBeams } from '@/components/ui/background-beams';
+import { TanstackQueryProvider } from '@/components/tanstack-query-provider';
 
 const roboto = Roboto({
 	subsets: ['latin'],
@@ -21,7 +22,9 @@ export default function RootLayout({
 	return (
 		<html lang='en'>
 			<body className={`${roboto.variable} font-roboto antialiased h-full min-h-screen dark`}>
-				<main className='z-10'>{children}</main>
+				<TanstackQueryProvider>
+					<main className='z-10'>{children}</main>
+				</TanstackQueryProvider>
 				<BackgroundBeams />
 			</body>
 		</html>
