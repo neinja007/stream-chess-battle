@@ -9,8 +9,8 @@ const roboto = Roboto({
 });
 
 export const metadata: Metadata = {
-	title: 'Twitch vs YouTube',
-	description: 'IMRosen Twitch vs YouTube Chess'
+	title: 'Stream Chess Battle',
+	description: 'Stream Chess Battle'
 };
 
 export default function RootLayout({
