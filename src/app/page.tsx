@@ -10,7 +10,9 @@ import { SiTwitch, SiYoutube } from '@icons-pack/react-simple-icons';
 import { InputGroup, InputGroupAddon, InputGroupInput } from '@/components/ui/input-group';
 import { Slider } from '@/components/ui/slider';
 import { Switch } from '@/components/ui/switch';
-import { ChartNoAxesColumnDecreasing, Dices, Weight } from 'lucide-react';
+import { ChartNoAxesColumnDecreasing, Dices, Save, Weight } from 'lucide-react';
+import { Button } from '@/components/ui/button';
+import { getSettingsCompletion } from '@/lib/settings-completion';
 
 export default function Home() {
 	const [status, setStatus] = useState<'settings' | 'playing'>('settings');
@@ -135,6 +137,13 @@ export default function Home() {
 						placeholder='Select an option'
 					/>
 				</SettingsSection>
+				<Button
+					onClick={() => setStatus('playing')}
+					disabled={getSettingsCompletion(settings) !== 1}
+					variant={'outline'}
+				>
+					<Save className='size-4' /> Save settings & start game
+				</Button>
 			</div>
 		);
 	}
