@@ -65,7 +65,7 @@ export const Chat = ({ moves, info, color, clearMove, activeTurn, timeLeft, defa
 								</button>
 							))
 					) : (
-						<div className='text-center text-muted-foreground'>Start voting!</div>
+						<div className='text-center'>Start voting!</div>
 					)
 				) : (
 					<div className='text-center text-muted-foreground'>Await your turn!</div>
