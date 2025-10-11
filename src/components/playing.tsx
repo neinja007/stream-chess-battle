@@ -19,16 +19,18 @@ export const Playing = ({ settings, setStatus }: PlayingProps) => {
 	const [timeLeft, setTimeLeft] = useState(settings.secondsPerMove);
 	const [paused, setPaused] = useState(true);
 
+	const testAndTransformMoveFunction = useCallback((move: string) => testAndTransformMove(position, move), [position]);
+
 	const whiteChat = useChat({
 		info: settings.playerWhite as PlayerInfo,
 		activeTurn: turn === 'w',
-		testAndTransformMove: (move: string) => testAndTransformMove(position, move)
+		testAndTransformMove: testAndTransformMoveFunction
 	});
 
 	const blackChat = useChat({
 		info: settings.playerBlack as PlayerInfo,
 		activeTurn: turn === 'b',
-		testAndTransformMove: (move: string) => testAndTransformMove(position, move)
+		testAndTransformMove: testAndTransformMoveFunction
 	});
 
 	const executeMove = useCallback(() => {
