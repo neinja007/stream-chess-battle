@@ -7,7 +7,7 @@ import { useChessGame } from '@/hooks/useChessGame';
 import { testAndTransformMove } from '@/lib/test-transform-move';
 import { useEffect, useState, useCallback, useMemo } from 'react';
 import { findMove } from '@/lib/find-move';
-import { Clock, Cog, Dices, Pause, Play, RotateCcw, Trash2 } from 'lucide-react';
+import { ArrowUpDown, Clock, Cog, Dices, Pause, Play, RotateCcw, Trash2 } from 'lucide-react';
 import { Button } from './ui/button';
 import Link from 'next/link';
 import { moveSelectionMap } from '@/data/move-selection-map';
@@ -21,6 +21,7 @@ export const Playing = ({ settings, setStatus }: PlayingProps) => {
 	const { position, move, gameOver, reset, turn, legalMoves } = useChessGame();
 	const [timeLeft, setTimeLeft] = useState(settings.secondsPerMove);
 	const [paused, setPaused] = useState(true);
+	const [orientation, setOrientation] = useState<'white' | 'black' | 'active'>('white');
 
 	const testAndTransformMoveFunction = useCallback((move: string) => testAndTransformMove(position, move), [position]);
 
@@ -63,9 +64,18 @@ export const Playing = ({ settings, setStatus }: PlayingProps) => {
 	return (
 		<div className='w-full max-w-7xl mx-auto pt-24 flex gap-5'>
 			<div className='flex items-center gap-4 shrink-0'>
-				{settings.evaluationBar === 'show' && <Evaluation game={position} />}
+				{settings.evaluationBar === 'show' && (
+					<Evaluation
+						game={position}
+						orientation={orientation === 'active' ? (turn === 'w' ? 'white' : 'black') : orientation}
+					/>
+				)}
 				<div className='max-w-xl rounded-xl overflow-hidden'>
-					<Chessboard game={position} moves={turn === 'w' ? whiteChat.moves : blackChat.moves} />
+					<Chessboard
+						game={position}
+						moves={turn === 'w' ? whiteChat.moves : blackChat.moves}
+						orientation={orientation === 'active' ? (turn === 'w' ? 'white' : 'black') : orientation}
+					/>
 				</div>
 			</div>
 			<div className='grid grid-rows-2 gap-4 h-[640px] w-56'>
@@ -114,6 +124,13 @@ export const Playing = ({ settings, setStatus }: PlayingProps) => {
 						}}
 					>
 						<RotateCcw /> Reset
+					</Button>
+					<Button
+						onClick={() =>
+							setOrientation(orientation === 'white' ? 'black' : orientation === 'black' ? 'active' : 'white')
+						}
+					>
+						<ArrowUpDown /> Orientation: {orientation}
 					</Button>
 				</div>
 				<hr className='w-full border-t border-blue-500 my-4' />
