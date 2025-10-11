@@ -2,7 +2,7 @@ import { Move } from '@/hooks/useChat';
 import { cn } from '@/lib/utils';
 import { PlayerInfo } from '@/types/settings';
 import { SiTwitch, SiYoutube } from '@icons-pack/react-simple-icons';
-import { X } from 'lucide-react';
+import { Ban } from 'lucide-react';
 
 type ChatProps = {
 	moves: Move[];
@@ -15,6 +15,8 @@ type ChatProps = {
 };
 
 export const Chat = ({ moves, info, color, clearMove, activeTurn, timeLeft, defaultTimeLeft }: ChatProps) => {
+	const totalCount = moves.reduce((acc, move) => acc + move.count, 0);
+
 	return (
 		<div className='flex flex-col gap-4 h-full overflow-hidden'>
 			<h1 className='text-lg font-semibold shrink-0 flex items-center justify-between gap-2'>
@@ -35,19 +37,34 @@ export const Chat = ({ moves, info, color, clearMove, activeTurn, timeLeft, defa
 					moves
 						.sort((a, b) => b.count - a.count)
 						.slice(0, 5)
-						.map((move) => (
-							<div key={move.move} className='group text-sm flex items-center justify-between gap-2'>
-								<span>{move.move}</span>
-								<div>
-									<span className='visible group-hover:hidden text-muted-foreground'>{move.count}</span>
-									<button className='hidden group-hover:block' onClick={() => clearMove(move.move)}>
-										<X className='size-4' />
-									</button>
+						.map((move, i) => (
+							<button
+								key={move.move}
+								className='relative group text-sm flex items-center justify-between gap-2 px-1'
+								onClick={() => clearMove(move.move)}
+							>
+								<div
+									className={cn(
+										'absolute left-0 top-0 h-full rounded z-0 transition-all',
+										i === 0 ? 'bg-red-700/90' : 'bg-yellow-300/75'
+									)}
+									style={{
+										width: `${(move.count / totalCount) * 100 || 0}%`
+									}}
+								/>
+								<span className='relative z-10'>{move.move}</span>
+								<div className='relative z-10'>
+									<span className='visible group-hover:hidden text-muted-foreground'>
+										{move.count} ({((move.count / totalCount) * 100).toFixed(1)}%)
+									</span>
+									<span className='hidden group-hover:flex text-red-500 items-center gap-1'>
+										Ban move <Ban className='size-4' />
+									</span>
 								</div>
-							</div>
+							</button>
 						))
 				) : (
-					<div className='text-center text-muted-foreground'>Await your turn...</div>
+					<div className='text-center text-muted-foreground'>Await your turn!</div>
 				)}
 			</div>
 			<div className='flex justify-between'>
