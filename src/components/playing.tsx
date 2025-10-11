@@ -158,6 +158,10 @@ export const Playing = ({ settings, setStatus }: PlayingProps) => {
 					<Cog className='size-4' />
 					Variant: <span className='font-bold'>Standard</span>
 				</div>
+				<div className='text-left w-full mb-2 flex items-center gap-1'>
+					<Cog className='size-4' />
+					Engine: <span className='font-bold'>Stockfish (Depth 15)</span>
+				</div>
 			</div>
 		</div>
 	);
