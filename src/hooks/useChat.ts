@@ -25,7 +25,11 @@ export const useChat = ({
 	const [status, setStatus] = useState<ChatStatus>('disconnected');
 	const eventSourceRef = useRef<EventSource | null>(null);
 
-	const clear = useCallback((move: string) => {
+	const clear = useCallback((move?: string) => {
+		if (!move) {
+			setMoves([]);
+			return;
+		}
 		setMoves((prev) => prev.filter((m) => m.move !== move));
 	}, []);
 
