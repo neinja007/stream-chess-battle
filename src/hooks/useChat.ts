@@ -87,7 +87,7 @@ export const useChat = ({
 			}
 			setStatus('disconnected');
 		};
-	}, [info, activeTurn, testAndTransformMove, moves]);
+	}, [info, activeTurn, testAndTransformMove]);
 
 	useEffect(() => {
 		return () => {
