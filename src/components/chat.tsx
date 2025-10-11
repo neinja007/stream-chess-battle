@@ -1,20 +1,21 @@
+import { Move } from '@/hooks/useChat';
 import { cn } from '@/lib/utils';
-import { Message } from '@/types/message';
+import { PlayerInfo } from '@/types/settings';
 import { SiTwitch, SiYoutube } from '@icons-pack/react-simple-icons';
 
 type ChatProps = {
-	messages: Message[];
-	channelId: string;
-	platform: 'twitch' | 'youtube';
+	moves: Move[];
+	activeTurn: boolean;
+	info: PlayerInfo;
 	color: 'white' | 'black';
 };
 
-export const Chat = ({ messages, channelId, platform, color }: ChatProps) => {
+export const Chat = ({ moves, info, color }: ChatProps) => {
 	return (
 		<div className='flex flex-col gap-4 h-full overflow-hidden'>
 			<h1 className='text-lg font-semibold shrink-0 flex items-center justify-between gap-2'>
-				<div className={cn('flex items-center gap-2', platform === 'twitch' ? 'text-purple-500' : 'text-red-500')}>
-					{platform === 'twitch' ? <SiTwitch /> : <SiYoutube />} {channelId}
+				<div className={cn('flex items-center gap-2', info.platform === 'twitch' ? 'text-purple-500' : 'text-red-500')}>
+					{info.platform === 'twitch' ? <SiTwitch /> : <SiYoutube />} {info.channel}
 				</div>
 				<div
 					className={cn(
@@ -26,11 +27,14 @@ export const Chat = ({ messages, channelId, platform, color }: ChatProps) => {
 				</div>
 			</h1>
 			<div className='flex flex-col gap-2 overflow-y-auto flex-1 scroll-smooth'>
-				{messages.map((message) => (
-					<div key={message.text} className='text-sm'>
-						{message.text}
-					</div>
-				))}
+				{moves
+					.sort((a, b) => b.count - a.count)
+					.slice(0, 5)
+					.map((move) => (
+						<div key={move.move} className='text-sm flex items-center justify-between gap-2'>
+							{move.move} <span className='text-muted-foreground'>{move.count}</span>
+						</div>
+					))}
 			</div>
 		</div>
 	);
