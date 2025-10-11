@@ -14,7 +14,7 @@ export const processMove = (
 	}
 	const move: Move = {
 		user: data.user || 'unknown',
-		move: transformedMove,
+		move: testAndTransformMove(transformedMove) || transformedMove,
 		count: 1
 	};
 	setMoves((prev) => {
