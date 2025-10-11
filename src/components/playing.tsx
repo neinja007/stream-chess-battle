@@ -5,7 +5,7 @@ import { useChat } from '@/hooks/useChat';
 import { Chat } from './chat';
 import { useChessGame } from '@/hooks/useChessGame';
 import { testAndTransformMove } from '@/lib/test-transform-move';
-import { useEffect, useState, useCallback } from 'react';
+import { useEffect, useState, useCallback, useMemo } from 'react';
 import { findMove } from '@/lib/find-move';
 import { Pause, Play } from 'lucide-react';
 
@@ -21,15 +21,17 @@ export const Playing = ({ settings, setStatus }: PlayingProps) => {
 
 	const testAndTransformMoveFunction = useCallback((move: string) => testAndTransformMove(position, move), [position]);
 
+	const activeTurnWhite = useMemo(() => turn === 'w', [turn]);
+
 	const whiteChat = useChat({
 		info: settings.playerWhite as PlayerInfo,
-		activeTurn: turn === 'w',
+		activeTurn: activeTurnWhite,
 		testAndTransformMove: testAndTransformMoveFunction
 	});
 
 	const blackChat = useChat({
 		info: settings.playerBlack as PlayerInfo,
-		activeTurn: turn === 'b',
+		activeTurn: !activeTurnWhite,
 		testAndTransformMove: testAndTransformMoveFunction
 	});
 
