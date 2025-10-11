@@ -7,6 +7,7 @@ import { useChessGame } from '@/hooks/useChessGame';
 import { testAndTransformMove } from '@/lib/test-transform-move';
 import { useEffect, useState, useCallback } from 'react';
 import { findMove } from '@/lib/find-move';
+import { Pause, Play } from 'lucide-react';
 
 type PlayingProps = {
 	settings: SettingsType;
@@ -16,6 +17,7 @@ type PlayingProps = {
 export const Playing = ({ settings, setStatus }: PlayingProps) => {
 	const { position, move, gameOver, reset, turn, legalMoves } = useChessGame();
 	const [timeLeft, setTimeLeft] = useState(settings.secondsPerMove);
+	const [paused, setPaused] = useState(true);
 
 	const whiteChat = useChat({
 		info: settings.playerWhite as PlayerInfo,
@@ -30,22 +32,29 @@ export const Playing = ({ settings, setStatus }: PlayingProps) => {
 	});
 
 	const executeMove = useCallback(() => {
-		move(findMove(turn === 'w' ? whiteChat.moves : blackChat.moves, settings.moveSelection!, legalMoves));
+		const foundMove = findMove(turn === 'w' ? whiteChat.moves : blackChat.moves, settings.moveSelection!, legalMoves);
+		console.log('Found move:', foundMove);
+		move(foundMove);
 	}, [move, turn, whiteChat.moves, blackChat.moves, settings.moveSelection, legalMoves]);
 
 	useEffect(() => {
+		if (paused) return;
 		const interval = setInterval(() => {
 			setTimeLeft((prev) => prev - 0.1);
 		}, 100);
 		return () => clearInterval(interval);
-	}, [settings.secondsPerMove]);
+	}, [paused, settings.secondsPerMove]);
+
+	console.log(timeLeft, position);
 
 	useEffect(() => {
 		if (timeLeft <= 0) {
 			setTimeLeft(settings.secondsPerMove);
 			executeMove();
+			whiteChat.clear();
+			blackChat.clear();
 		}
-	}, [executeMove, settings.secondsPerMove, timeLeft]);
+	}, [blackChat, executeMove, settings.secondsPerMove, timeLeft, whiteChat]);
 
 	return (
 		<div className='w-full max-w-7xl mx-auto pt-24 flex gap-5'>
@@ -74,6 +83,11 @@ export const Playing = ({ settings, setStatus }: PlayingProps) => {
 					timeLeft={timeLeft}
 					defaultTimeLeft={settings.secondsPerMove}
 				/>
+			</div>
+			<div>
+				<button onClick={() => setPaused(!paused)} className='bg-white text-black rounded-md p-2'>
+					{paused ? <Play /> : <Pause />}
+				</button>
 			</div>
 		</div>
 	);
