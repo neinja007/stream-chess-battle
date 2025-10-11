@@ -2,9 +2,10 @@ import { useEvaluation } from '@/hooks/useEvaluation';
 
 type EvaluationProps = {
 	game: string;
+	orientation: 'white' | 'black';
 };
 
-export const Evaluation = ({ game }: EvaluationProps) => {
+export const Evaluation = ({ game, orientation }: EvaluationProps) => {
 	const { data: evaluation } = useEvaluation(game);
 
 	const evalValue = evaluation?.evaluation ?? 0;
@@ -18,9 +19,17 @@ export const Evaluation = ({ game }: EvaluationProps) => {
 
 	return (
 		<>
-			<div className='w-8 bg-gray-700 flex-1 self-stretch max-w-8 rounded-lg overflow-hidden flex flex-col justify-between'>
+			<div
+				className='w-8 bg-gray-700 flex-1 self-stretch max-w-8 rounded-lg overflow-hidden flex flex-col justify-between'
+				style={{ rotate: orientation === 'white' ? '180deg' : '0deg' }}
+			>
 				<div className='h-full bg-white transition-all duration-500 ease-in-out' style={{ height: `${barHeight}%` }} />
-				<div className='text-xs text-center mb-1 text-white font-bold'>{(evalValue / 100).toFixed(1)}</div>
+				<div
+					className='text-xs text-center m-2 text-white font-bold'
+					style={{ rotate: orientation === 'white' ? '180deg' : '0deg' }}
+				>
+					{(evalValue / 100).toFixed(1)}
+				</div>
 			</div>
 		</>
 	);
