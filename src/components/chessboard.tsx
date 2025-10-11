@@ -5,9 +5,10 @@ import { Arrow, Chessboard as ChessboardComponent } from 'react-chessboard';
 type ChessboardProps = {
 	game: string;
 	moves: Move[];
+	orientation: 'white' | 'black';
 };
 
-export const Chessboard = ({ game, moves }: ChessboardProps) => {
+export const Chessboard = ({ game, moves, orientation }: ChessboardProps) => {
 	const arrows = moves
 		.sort((a, b) => b.count - a.count)
 		.slice(0, 5)
@@ -37,7 +38,7 @@ export const Chessboard = ({ game, moves }: ChessboardProps) => {
 			options={{
 				position: game,
 				animationDurationInMs: 1000,
-				boardOrientation: 'white',
+				boardOrientation: orientation,
 				allowDragging: process.env.NEXT_PUBLIC_ENABLE_DEVTOOLS === 'true' ? true : false,
 				numericNotationStyle: {
 					fontSize: '16px',
