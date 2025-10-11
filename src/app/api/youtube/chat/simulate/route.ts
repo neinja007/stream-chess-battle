@@ -69,7 +69,9 @@ export async function GET(req: Request) {
 						'h3',
 						'Nb8',
 						'd4',
-						'Nbd7'
+						'Nbd7',
+						'g3',
+						'g6'
 					];
 
 					const user = users[Math.floor(Math.random() * users.length)];
@@ -83,7 +85,7 @@ export async function GET(req: Request) {
 					if (connected) {
 						simulateMessage();
 					}
-				}, Math.random() * 2000);
+				}, Math.random() * 200);
 
 				// Clean up message interval
 				const originalCloseAll = closeAll;
