@@ -1,7 +1,6 @@
 import type { Metadata } from 'next';
 import './globals.css';
 import { Roboto } from 'next/font/google';
-import { BackgroundBeams } from '@/components/ui/background-beams';
 import { TanstackQueryProvider } from '@/components/tanstack-query-provider';
 import { Analytics } from '@vercel/analytics/next';
 
@@ -26,7 +25,7 @@ export default function RootLayout({
 				<TanstackQueryProvider>
 					<main className='z-10'>{children}</main>
 				</TanstackQueryProvider>
-				<BackgroundBeams />
+				{/* <BackgroundBeams /> */}
 				<Analytics />
 			</body>
 		</html>
