@@ -7,7 +7,7 @@ export const processMove = (
 	setMoves: Dispatch<SetStateAction<Move[]>>
 ) => {
 	const data: { user: string; text: string } = rawMove;
-	const textSnippets = data.text.split(' ');
+	const textSnippets = data.text.trim().split(' ');
 	const transformedMove = textSnippets.find((snippet) => testAndTransformMove(snippet));
 	if (!transformedMove) {
 		return;
