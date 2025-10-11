@@ -12,7 +12,6 @@ export const getSettingsCompletion = (settings: GameSettings): number => {
 	];
 
 	const completion = settingsCompletion.filter(Boolean).length / settingsCompletion.length;
-	console.log(completion);
 
 	return Math.floor(completion * 100) / 100;
 };
