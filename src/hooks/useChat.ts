@@ -44,9 +44,7 @@ export const useChat = ({
 			eventSourceRef.current = null;
 		}
 
-		const url = `/api/${info.platform}/chat${
-			info.platform === 'youtube' ? '/simulate' : ''
-		}?channel_id=${encodeURIComponent(info.channel)}`;
+		const url = `/api/${info.platform}/chat?channel_id=${encodeURIComponent(info.channel)}`;
 		const eventSource = new EventSource(url);
 		eventSourceRef.current = eventSource;
 
