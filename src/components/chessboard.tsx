@@ -32,8 +32,6 @@ export const Chessboard = ({ game, moves }: ChessboardProps) => {
 		}, [] as Arrow[])
 		.reverse();
 
-	console.log(arrows);
-
 	return (
 		<ChessboardComponent
 			options={{
