@@ -142,11 +142,9 @@ export async function GET(req: Request) {
 
 					const data: YouTubeLiveChatResponse = await response.json();
 
-					// Update polling interval and next page token
 					pollingInterval = data.pollingIntervalMillis || 5000;
 					nextPageToken = data.nextPageToken || null;
 
-					// Process messages
 					for (const message of data.items) {
 						const user = message.authorDetails.displayName;
 						const text = message.snippet.displayMessage;
@@ -164,7 +162,6 @@ export async function GET(req: Request) {
 				}
 			};
 
-			// Initialize connection
 			const initializeConnection = async () => {
 				try {
 					writeSse(controller, 'system', { message: `Connecting to YouTube Live Chat for channel: ${channelId}` });
@@ -177,7 +174,6 @@ export async function GET(req: Request) {
 					connected = true;
 					writeSse(controller, 'system', { message: `Connected to YouTube Live Chat` });
 
-					// Start polling for messages
 					const pollMessages = () => {
 						if (connected) {
 							fetchChatMessages();
@@ -185,12 +181,10 @@ export async function GET(req: Request) {
 						}
 					};
 
-					// Keep the SSE alive for proxies
 					keepAlive = setInterval(() => {
 						controller.enqueue(new TextEncoder().encode(': keep-alive\n\n'));
 					}, 15000);
 
-					// Start polling
 					pollMessages();
 				} catch (error) {
 					writeSse(controller, 'error', {
@@ -201,18 +195,14 @@ export async function GET(req: Request) {
 				}
 			};
 
-			// Start the connection
 			initializeConnection();
 
-			// Handle client disconnect
 			req.signal.addEventListener('abort', () => {
 				writeSse(controller, 'system', { message: 'Client disconnected' });
 				closeAll('client aborted');
 			});
 		},
-		cancel() {
-			// No-op; handled in closeAll
-		}
+		cancel() {}
 	});
 
 	return new Response(stream, {
