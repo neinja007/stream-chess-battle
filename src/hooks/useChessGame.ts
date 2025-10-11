@@ -7,7 +7,6 @@ export const useChessGame = () => {
 		position: game.fen(),
 		move: game.move,
 		gameOver: game.isGameOver(),
-		legalMoves: game.moves(),
 		reset: game.reset,
 		turn: game.turn()
 	};
