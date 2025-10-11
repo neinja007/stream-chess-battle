@@ -1,19 +1,36 @@
+import { processMove } from '@/lib/process-move';
 import { useState, useEffect, useCallback, useRef } from 'react';
-import { Message } from '@/types/message';
 
 type ChatStatus = 'active' | 'disconnected';
 
-export const useChat = ({ type, channelId }: { type: 'twitch' | 'youtube'; channelId: string }) => {
-	const [moves, setMoves] = useState<Message[]>([]);
+export type Move = {
+	move: string;
+	user: string;
+	count: number;
+};
+
+export const useChat = ({
+	activeTurn,
+	testAndTransformMove,
+	info
+}: {
+	info: {
+		platform: 'twitch' | 'youtube';
+		channel: string;
+	};
+	activeTurn: boolean;
+	testAndTransformMove: (move: string) => string | undefined;
+}) => {
+	const [moves, setMoves] = useState<Move[]>([]);
 	const [status, setStatus] = useState<ChatStatus>('disconnected');
 	const eventSourceRef = useRef<EventSource | null>(null);
 
 	const clear = useCallback((move: string) => {
-		setMoves((prev) => prev.filter((m) => m.text !== move));
+		setMoves((prev) => prev.filter((m) => m.move !== move));
 	}, []);
 
 	useEffect(() => {
-		if (!channelId) {
+		if (!info.channel) {
 			setStatus('disconnected');
 			return;
 		}
@@ -23,21 +40,19 @@ export const useChat = ({ type, channelId }: { type: 'twitch' | 'youtube'; chann
 			eventSourceRef.current = null;
 		}
 
-		const url = `/api/${type.replace('youtube', 'youtube/simulate')}/chat?channel_id=${encodeURIComponent(channelId)}`;
+		const url = `/api/${info.platform}/chat${
+			info.platform === 'youtube' ? '/simulate' : ''
+		}?channel_id=${encodeURIComponent(info.channel)}`;
 		const eventSource = new EventSource(url);
 		eventSourceRef.current = eventSource;
 
 		setStatus('active');
 
-		eventSource.addEventListener('message', (event) => {
+		eventSource.addEventListener('message', (event: MessageEvent<string>) => {
 			try {
-				const data = JSON.parse(event.data);
-				const message: Message = {
-					platform: type,
-					user: data.user || 'unknown',
-					text: data.text || ''
-				};
-				setMoves((prev) => [...prev, message]);
+				if (activeTurn) {
+					processMove(testAndTransformMove, JSON.parse(event.data), moves, setMoves);
+				}
 			} catch (error) {
 				console.error('Error parsing message:', error);
 			}
@@ -57,7 +72,6 @@ export const useChat = ({ type, channelId }: { type: 'twitch' | 'youtube'; chann
 			setStatus('disconnected');
 		});
 
-		// Handle connection open
 		eventSource.onopen = () => {
 			setStatus('active');
 		};
@@ -69,7 +83,7 @@ export const useChat = ({ type, channelId }: { type: 'twitch' | 'youtube'; chann
 			}
 			setStatus('disconnected');
 		};
-	}, [type, channelId]);
+	}, [info, activeTurn, testAndTransformMove, moves]);
 
 	useEffect(() => {
 		return () => {
