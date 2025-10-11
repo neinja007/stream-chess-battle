@@ -51,7 +51,7 @@ export const Chat = ({ moves, info, color, clearMove, activeTurn, timeLeft, defa
 				)}
 			</div>
 			<div className='flex justify-between'>
-				<span>{moves.length} Votes</span>
+				<span>{moves.reduce((acc, move) => acc + move.count, 0)} Votes</span>
 				<div className={cn('rounded-md text-black px-2 py-0.5', activeTurn ? 'bg-white' : 'bg-gray-500')}>
 					{activeTurn ? timeLeft.toFixed(2) : defaultTimeLeft.toFixed(2)}
 				</div>
