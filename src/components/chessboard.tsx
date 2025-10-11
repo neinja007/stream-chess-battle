@@ -11,7 +11,7 @@ export const Chessboard = ({ game }: ChessboardProps) => {
 				position: game,
 				animationDurationInMs: 1000,
 				boardOrientation: 'white',
-				allowDragging: false,
+				allowDragging: process.env.NEXT_PUBLIC_ENABLE_DEVTOOLS === 'true' ? true : false,
 				numericNotationStyle: {
 					fontSize: '16px',
 					fontWeight: 'bold'
@@ -28,7 +28,7 @@ export const Chessboard = ({ game }: ChessboardProps) => {
 				lightSquareStyle: {
 					backgroundColor: 'oklch(74.6% 0.16 232.661)'
 				},
-				allowDrawingArrows: false
+				allowDrawingArrows: process.env.NEXT_PUBLIC_ENABLE_DEVTOOLS === 'true' ? true : false
 				// squareRenderer: ({ piece, children }) => {
 				// 	if (piece) {
 				// 		const isTwitchPiece = (piece.pieceType.startsWith('w') ? 1 : 0) ^ (whoPlaysWhite === 'twitch' ? 1 : 0);
