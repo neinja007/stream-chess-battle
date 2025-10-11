@@ -58,7 +58,7 @@ export const Playing = ({ settings, setStatus }: PlayingProps) => {
 			<div className='flex items-center gap-4 shrink-0'>
 				{settings.evaluationBar === 'show' && <Evaluation game={position} />}
 				<div className='max-w-xl rounded-xl overflow-hidden'>
-					<Chessboard game={position} />
+					<Chessboard game={position} moves={turn === 'w' ? whiteChat.moves : blackChat.moves} />
 				</div>
 			</div>
 			<div className='grid grid-rows-2 gap-4 h-[640px] w-56'>

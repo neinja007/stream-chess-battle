@@ -1,10 +1,39 @@
-import { Chessboard as ChessboardComponent } from 'react-chessboard';
+import { Move } from '@/hooks/useChat';
+import { Chess } from 'chess.js';
+import { Arrow, Chessboard as ChessboardComponent } from 'react-chessboard';
 
 type ChessboardProps = {
 	game: string;
+	moves: Move[];
 };
 
-export const Chessboard = ({ game }: ChessboardProps) => {
+export const Chessboard = ({ game, moves }: ChessboardProps) => {
+	const arrows = moves
+		.sort((a, b) => b.count - a.count)
+		.slice(0, 5)
+		.reduce((acc, move, i) => {
+			try {
+				const chess = new Chess(game);
+
+				const result = chess.move(move.move, { strict: false });
+				if (!result) return acc;
+
+				return [
+					...acc,
+					{
+						startSquare: result.from,
+						endSquare: result.to,
+						color: i === 0 ? '#ff0000' : '#ffff00'
+					} as Arrow
+				];
+			} catch {
+				return acc;
+			}
+		}, [] as Arrow[])
+		.reverse();
+
+	console.log(arrows);
+
 	return (
 		<ChessboardComponent
 			options={{
@@ -28,6 +57,7 @@ export const Chessboard = ({ game }: ChessboardProps) => {
 				lightSquareStyle: {
 					backgroundColor: 'oklch(74.6% 0.16 232.661)'
 				},
+				arrows,
 				allowDrawingArrows: process.env.NEXT_PUBLIC_ENABLE_DEVTOOLS === 'true' ? true : false
 				// squareRenderer: ({ piece, children }) => {
 				// 	if (piece) {
