@@ -4,7 +4,6 @@ import { Dispatch, SetStateAction } from 'react';
 export const processMove = (
 	testAndTransformMove: (move: string) => string | undefined,
 	rawMove: { text: string; user: string },
-	moves: Move[],
 	setMoves: Dispatch<SetStateAction<Move[]>>
 ) => {
 	const data: { user: string; text: string } = rawMove;

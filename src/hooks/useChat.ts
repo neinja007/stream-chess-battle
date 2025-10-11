@@ -51,7 +51,7 @@ export const useChat = ({
 		eventSource.addEventListener('message', (event: MessageEvent<string>) => {
 			try {
 				if (activeTurn) {
-					processMove(testAndTransformMove, JSON.parse(event.data), moves, setMoves);
+					processMove(testAndTransformMove, JSON.parse(event.data), setMoves);
 				}
 			} catch (error) {
 				console.error('Error parsing message:', error);
