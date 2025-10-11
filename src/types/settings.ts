@@ -16,3 +16,8 @@ export type Player = {
 	platform: 'twitch' | 'youtube' | undefined;
 	channel: string;
 };
+
+export type PlayerInfo = {
+	platform: 'twitch' | 'youtube';
+	channel: string;
+};
