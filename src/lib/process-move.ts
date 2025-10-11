@@ -17,10 +17,14 @@ export const processMove = (
 		count: 1
 	};
 	setMoves((prev) => {
-		const existingMove = prev.find((m) => m.move === move.move);
-		if (existingMove) {
-			existingMove.count++;
-			return prev;
+		const existingMoveIndex = prev.findIndex((m) => m.move === move.move);
+		if (existingMoveIndex !== -1) {
+			const newMoves = [...prev];
+			newMoves[existingMoveIndex] = {
+				...newMoves[existingMoveIndex],
+				count: newMoves[existingMoveIndex].count + 1
+			};
+			return newMoves;
 		}
 		return [...prev, move];
 	});
