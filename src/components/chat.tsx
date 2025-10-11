@@ -34,35 +34,39 @@ export const Chat = ({ moves, info, color, clearMove, activeTurn, timeLeft, defa
 			</h1>
 			<div className='flex flex-col gap-2 overflow-y-auto flex-1 scroll-smooth'>
 				{activeTurn ? (
-					moves
-						.sort((a, b) => b.count - a.count)
-						.slice(0, 5)
-						.map((move, i) => (
-							<button
-								key={move.move}
-								className='relative group text-sm flex items-center justify-between gap-2 px-1'
-								onClick={() => clearMove(move.move)}
-							>
-								<div
-									className={cn(
-										'absolute left-0 top-0 h-full rounded z-0 transition-all',
-										i === 0 ? 'bg-red-700/90' : 'bg-yellow-300/75'
-									)}
-									style={{
-										width: `${(move.count / totalCount) * 100 || 0}%`
-									}}
-								/>
-								<span className='relative z-10'>{move.move}</span>
-								<div className='relative z-10'>
-									<span className='visible group-hover:hidden text-muted-foreground'>
-										{move.count} ({((move.count / totalCount) * 100).toFixed(1)}%)
-									</span>
-									<span className='hidden group-hover:flex text-red-500 items-center gap-1'>
-										Ban move <Ban className='size-4' />
-									</span>
-								</div>
-							</button>
-						))
+					moves.length > 0 ? (
+						moves
+							.sort((a, b) => b.count - a.count)
+							.slice(0, 5)
+							.map((move, i) => (
+								<button
+									key={move.move}
+									className='relative group text-sm flex items-center justify-between gap-2 px-1'
+									onClick={() => clearMove(move.move)}
+								>
+									<div
+										className={cn(
+											'absolute left-0 top-0 h-full rounded z-0 transition-all',
+											i === 0 ? 'bg-red-700/90' : 'bg-yellow-300/75'
+										)}
+										style={{
+											width: `${(move.count / totalCount) * 100 || 0}%`
+										}}
+									/>
+									<span className='relative z-10'>{move.move}</span>
+									<div className='relative z-10'>
+										<span className='visible group-hover:hidden text-muted-foreground'>
+											{move.count} ({((move.count / totalCount) * 100).toFixed(1)}%)
+										</span>
+										<span className='hidden group-hover:flex text-red-500 items-center gap-1'>
+											Ban move <Ban className='size-4' />
+										</span>
+									</div>
+								</button>
+							))
+					) : (
+						<div className='text-center text-muted-foreground'>Start voting!</div>
+					)
 				) : (
 					<div className='text-center text-muted-foreground'>Await your turn!</div>
 				)}
