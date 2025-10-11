@@ -25,10 +25,10 @@ export const Evaluation = ({ game, orientation }: EvaluationProps) => {
 			>
 				<div className='h-full bg-white transition-all duration-500 ease-in-out' style={{ height: `${barHeight}%` }} />
 				<div
-					className='text-xs text-center m-2 text-white font-bold'
+					className='text-xs text-center my-2 text-white font-bold'
 					style={{ rotate: orientation === 'white' ? '180deg' : '0deg' }}
 				>
-					{(evalValue / 100).toFixed(1)}
+					{(evalValue / 100).toFixed(Math.abs(evalValue) > 1000 ? 0 : 1)}
 				</div>
 			</div>
 		</>
