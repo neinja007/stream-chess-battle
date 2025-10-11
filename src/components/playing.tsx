@@ -61,33 +61,32 @@ export const Playing = ({ settings, setStatus }: PlayingProps) => {
 		}
 	}, [blackChat, executeMove, settings.secondsPerMove, timeLeft, whiteChat]);
 
+	const activeOrientation = orientation === 'active' ? (turn === 'w' ? 'white' : 'black') : orientation;
+
 	return (
 		<div className='w-full max-w-7xl mx-auto pt-24 flex gap-5'>
 			<div className='flex items-center gap-4 shrink-0'>
-				{settings.evaluationBar === 'show' && (
-					<Evaluation
-						game={position}
-						orientation={orientation === 'active' ? (turn === 'w' ? 'white' : 'black') : orientation}
-					/>
-				)}
+				{settings.evaluationBar === 'show' && <Evaluation game={position} orientation={activeOrientation} />}
 				<div className='max-w-xl rounded-xl overflow-hidden'>
 					<Chessboard
 						game={position}
 						moves={turn === 'w' ? whiteChat.moves : blackChat.moves}
-						orientation={orientation === 'active' ? (turn === 'w' ? 'white' : 'black') : orientation}
+						orientation={activeOrientation}
 					/>
 				</div>
 			</div>
 			<div className='grid grid-rows-2 gap-4 h-[640px] w-56'>
-				<Chat
-					activeTurn={turn === 'w'}
-					moves={whiteChat.moves}
-					color='white'
-					info={settings.playerWhite as PlayerInfo}
-					clearMove={whiteChat.clear}
-					timeLeft={timeLeft}
-					defaultTimeLeft={settings.secondsPerMove}
-				/>
+				{activeOrientation !== 'white' && (
+					<Chat
+						activeTurn={turn === 'w'}
+						moves={whiteChat.moves}
+						color='white'
+						info={settings.playerWhite as PlayerInfo}
+						clearMove={whiteChat.clear}
+						timeLeft={timeLeft}
+						defaultTimeLeft={settings.secondsPerMove}
+					/>
+				)}
 				<Chat
 					activeTurn={turn === 'b'}
 					moves={blackChat.moves}
@@ -97,6 +96,17 @@ export const Playing = ({ settings, setStatus }: PlayingProps) => {
 					timeLeft={timeLeft}
 					defaultTimeLeft={settings.secondsPerMove}
 				/>
+				{activeOrientation === 'white' && (
+					<Chat
+						activeTurn={turn === 'w'}
+						moves={whiteChat.moves}
+						color='white'
+						info={settings.playerWhite as PlayerInfo}
+						clearMove={whiteChat.clear}
+						timeLeft={timeLeft}
+						defaultTimeLeft={settings.secondsPerMove}
+					/>
+				)}
 			</div>
 			<div className='flex flex-col items-center grow'>
 				<div className='w-full text-lg flex items-end gap-2 justify-between'>
