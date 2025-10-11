@@ -9,12 +9,13 @@ export const findMove = (moves: Move[], strategy: 'mostVotes' | 'weightedRandom'
 		case 'mostVotes':
 			return moves.sort((a, b) => b.count - a.count)[0].move;
 		case 'weightedRandom':
-			return moves.reduce((acc: string[], move) => {
+			const weightedMoves = moves.reduce((acc: string[], move) => {
 				for (let i = 0; i < move.count; i++) {
 					acc.push(move.move);
 				}
 				return acc;
-			}, [])[Math.floor(Math.random() * moves.length)];
+			}, []);
+			return weightedMoves[Math.floor(Math.random() * weightedMoves.length)];
 		case 'random':
 			return moves[Math.floor(Math.random() * moves.length)].move;
 	}
