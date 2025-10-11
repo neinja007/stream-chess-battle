@@ -1,10 +1,10 @@
-import { GameSettings as SettingsType } from '@/types/settings';
-import { useState } from 'react';
+import { PlayerInfo, GameSettings as SettingsType } from '@/types/settings';
 import { Chessboard } from './chessboard';
 import { Evaluation } from './evaluation';
-import { defaultFen } from '@/data/chess';
 import { useChat } from '@/hooks/useChat';
 import { Chat } from './chat';
+import { useChessGame } from '@/hooks/useChessGame';
+import { testAndTransformMove } from '@/lib/test-transform-move';
 
 type PlayingProps = {
 	settings: SettingsType;
@@ -12,38 +12,40 @@ type PlayingProps = {
 };
 
 export const Playing = ({ settings, setStatus }: PlayingProps) => {
-	const [game, setGame] = useState<string>(defaultFen);
+	const { position, move, gameOver, legalMoves, reset, turn } = useChessGame();
 
 	const whiteChat = useChat({
-		type: settings.playerWhite.platform!,
-		channelId: settings.playerWhite.channel!
+		info: settings.playerWhite as PlayerInfo,
+		activeTurn: turn === 'w',
+		testAndTransformMove: (move: string) => testAndTransformMove(position, move)
 	});
 
 	const blackChat = useChat({
-		type: settings.playerBlack.platform!,
-		channelId: settings.playerBlack.channel!
+		info: settings.playerBlack as PlayerInfo,
+		activeTurn: turn === 'b',
+		testAndTransformMove: (move: string) => testAndTransformMove(position, move)
 	});
 
 	return (
 		<div className='w-full max-w-7xl mx-auto pt-24 flex gap-4'>
 			<div className='flex items-center gap-4 shrink-0'>
-				{settings.evaluationBar === 'show' && <Evaluation game={game} />}
+				{settings.evaluationBar === 'show' && <Evaluation game={position} />}
 				<div className='max-w-xl rounded-xl overflow-hidden'>
-					<Chessboard game={game} />
+					<Chessboard game={position} />
 				</div>
 			</div>
 			<div className='grid grid-rows-2 gap-4 h-[640px]'>
 				<Chat
-					messages={whiteChat.moves}
-					platform={settings.playerWhite.platform!}
+					activeTurn={turn === 'w'}
+					moves={whiteChat.moves}
 					color='white'
-					channelId={settings.playerWhite.channel!}
+					info={settings.playerWhite as PlayerInfo}
 				/>
 				<Chat
-					messages={blackChat.moves}
-					platform={settings.playerBlack.platform!}
+					activeTurn={turn === 'b'}
+					moves={blackChat.moves}
 					color='black'
-					channelId={settings.playerBlack.channel!}
+					info={settings.playerBlack as PlayerInfo}
 				/>
 			</div>
 		</div>
