@@ -7,7 +7,10 @@ import { useChessGame } from '@/hooks/useChessGame';
 import { testAndTransformMove } from '@/lib/test-transform-move';
 import { useEffect, useState, useCallback, useMemo } from 'react';
 import { findMove } from '@/lib/find-move';
-import { Pause, Play } from 'lucide-react';
+import { Clock, Cog, Dices, Pause, Play, RotateCcw, Trash2 } from 'lucide-react';
+import { Button } from './ui/button';
+import Link from 'next/link';
+import { moveSelectionMap } from '@/data/move-selection-map';
 
 type PlayingProps = {
 	settings: SettingsType;
@@ -85,10 +88,59 @@ export const Playing = ({ settings, setStatus }: PlayingProps) => {
 					defaultTimeLeft={settings.secondsPerMove}
 				/>
 			</div>
-			<div>
-				<button onClick={() => setPaused(!paused)} className='bg-white text-black rounded-md p-2'>
-					{paused ? <Play /> : <Pause />}
-				</button>
+			<div className='flex flex-col items-center grow'>
+				<div className='w-full text-lg flex items-end gap-2 justify-between'>
+					<span className='font-bold text-2xl'>Stream Chess Battle</span>
+					<span>
+						by{' '}
+						<Link href='https://neinja.dev' target='_blank' className='text-blue-500 underline'>
+							neinja.dev
+						</Link>
+					</span>
+				</div>
+				<hr className='w-full border-t border-blue-500 my-4 mt-2' />
+				<div className='text-left w-full mb-2 text-lg'>Game controls</div>
+				<div className='grid grid-cols-2 gap-2 w-full'>
+					<Button onClick={() => setPaused(!paused)}>
+						{paused ? <Play /> : <Pause />} {paused ? 'Resume' : 'Pause'}
+					</Button>
+					<Button
+						onClick={() => {
+							reset();
+							setPaused(true);
+							setTimeLeft(settings.secondsPerMove);
+							whiteChat.clear();
+							blackChat.clear();
+						}}
+					>
+						<RotateCcw /> Reset
+					</Button>
+				</div>
+				<hr className='w-full border-t border-blue-500 my-4' />
+				<div className='text-left w-full mb-2 text-lg'>Chat controls</div>
+				<div className='grid grid-cols-2 gap-2 w-full'>
+					<Button onClick={() => whiteChat.clear()}>
+						<Trash2 /> Clear White Chat
+					</Button>
+					<Button onClick={() => blackChat.clear()}>
+						<Trash2 /> Clear Black Chat
+					</Button>
+				</div>
+				<hr className='w-full border-t border-blue-500 my-4' />
+				<div className='text-left w-full mb-2 text-lg'>Game information</div>
+				<div className='text-left w-full mb-2 flex items-center gap-1'>
+					<Clock className='size-4' />
+					Time per move: <span className='font-bold'>{settings.secondsPerMove} seconds</span>
+				</div>
+				<div className='text-left w-full mb-2 flex items-center gap-1'>
+					<Dices className='size-4' />
+					Move selection:{' '}
+					<span className='font-bold'>{moveSelectionMap[settings.moveSelection as keyof typeof moveSelectionMap]}</span>
+				</div>
+				<div className='text-left w-full mb-2 flex items-center gap-1'>
+					<Cog className='size-4' />
+					Variant: <span className='font-bold'>Standard</span>
+				</div>
 			</div>
 		</div>
 	);
