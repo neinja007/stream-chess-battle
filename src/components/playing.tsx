@@ -33,7 +33,6 @@ export const Playing = ({ settings, setStatus }: PlayingProps) => {
 
 	const executeMove = useCallback(() => {
 		const foundMove = findMove(turn === 'w' ? whiteChat.moves : blackChat.moves, settings.moveSelection!, legalMoves);
-		console.log('Found move:', foundMove);
 		move(foundMove);
 	}, [move, turn, whiteChat.moves, blackChat.moves, settings.moveSelection, legalMoves]);
 
@@ -44,8 +43,6 @@ export const Playing = ({ settings, setStatus }: PlayingProps) => {
 		}, 100);
 		return () => clearInterval(interval);
 	}, [paused, settings.secondsPerMove]);
-
-	console.log(timeLeft, position);
 
 	useEffect(() => {
 		if (timeLeft <= 0) {
