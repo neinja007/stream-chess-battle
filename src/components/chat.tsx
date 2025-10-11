@@ -2,15 +2,17 @@ import { Move } from '@/hooks/useChat';
 import { cn } from '@/lib/utils';
 import { PlayerInfo } from '@/types/settings';
 import { SiTwitch, SiYoutube } from '@icons-pack/react-simple-icons';
+import { X } from 'lucide-react';
 
 type ChatProps = {
 	moves: Move[];
 	activeTurn: boolean;
 	info: PlayerInfo;
 	color: 'white' | 'black';
+	clearMove: (move: string) => void;
 };
 
-export const Chat = ({ moves, info, color }: ChatProps) => {
+export const Chat = ({ moves, info, color, clearMove }: ChatProps) => {
 	return (
 		<div className='flex flex-col gap-4 h-full overflow-hidden'>
 			<h1 className='text-lg font-semibold shrink-0 flex items-center justify-between gap-2'>
@@ -31,8 +33,14 @@ export const Chat = ({ moves, info, color }: ChatProps) => {
 					.sort((a, b) => b.count - a.count)
 					.slice(0, 5)
 					.map((move) => (
-						<div key={move.move} className='text-sm flex items-center justify-between gap-2'>
-							{move.move} <span className='text-muted-foreground'>{move.count}</span>
+						<div key={move.move} className='group text-sm flex items-center justify-between gap-2'>
+							<span>{move.move}</span>
+							<div>
+								<span className='visible group-hover:hidden text-muted-foreground'>{move.count}</span>
+								<button className='hidden group-hover:block' onClick={() => clearMove(move.move)}>
+									<X className='size-4' />
+								</button>
+							</div>
 						</div>
 					))}
 			</div>
