@@ -11,5 +11,8 @@ export const getSettingsCompletion = (settings: GameSettings): number => {
 		// settings.evaluationBar !== undefined
 	];
 
-	return settingsCompletion.filter(Boolean).length / settingsCompletion.length;
+	const completion = settingsCompletion.filter(Boolean).length / settingsCompletion.length;
+	console.log(completion);
+
+	return Math.floor(completion * 100) / 100;
 };
