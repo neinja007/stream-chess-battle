@@ -5,6 +5,8 @@ import { useChat } from '@/hooks/useChat';
 import { Chat } from './chat';
 import { useChessGame } from '@/hooks/useChessGame';
 import { testAndTransformMove } from '@/lib/test-transform-move';
+import { useEffect, useState, useCallback } from 'react';
+import { findMove } from '@/lib/find-move';
 
 type PlayingProps = {
 	settings: SettingsType;
@@ -12,7 +14,8 @@ type PlayingProps = {
 };
 
 export const Playing = ({ settings, setStatus }: PlayingProps) => {
-	const { position, move, gameOver, reset, turn } = useChessGame();
+	const { position, move, gameOver, reset, turn, legalMoves } = useChessGame();
+	const [timeLeft, setTimeLeft] = useState(settings.secondsPerMove);
 
 	const whiteChat = useChat({
 		info: settings.playerWhite as PlayerInfo,
@@ -25,6 +28,24 @@ export const Playing = ({ settings, setStatus }: PlayingProps) => {
 		activeTurn: turn === 'b',
 		testAndTransformMove: (move: string) => testAndTransformMove(position, move)
 	});
+
+	const executeMove = useCallback(() => {
+		move(findMove(turn === 'w' ? whiteChat.moves : blackChat.moves, settings.moveSelection!, legalMoves));
+	}, [move, turn, whiteChat.moves, blackChat.moves, settings.moveSelection, legalMoves]);
+
+	useEffect(() => {
+		const interval = setInterval(() => {
+			setTimeLeft((prev) => prev - 0.1);
+		}, 100);
+		return () => clearInterval(interval);
+	}, [settings.secondsPerMove]);
+
+	useEffect(() => {
+		if (timeLeft <= 0) {
+			setTimeLeft(settings.secondsPerMove);
+			executeMove();
+		}
+	}, [executeMove, settings.secondsPerMove, timeLeft]);
 
 	return (
 		<div className='w-full max-w-7xl mx-auto pt-24 flex gap-5'>
@@ -41,6 +62,8 @@ export const Playing = ({ settings, setStatus }: PlayingProps) => {
 					color='white'
 					info={settings.playerWhite as PlayerInfo}
 					clearMove={whiteChat.clear}
+					timeLeft={timeLeft}
+					defaultTimeLeft={settings.secondsPerMove}
 				/>
 				<Chat
 					activeTurn={turn === 'b'}
@@ -48,6 +71,8 @@ export const Playing = ({ settings, setStatus }: PlayingProps) => {
 					color='black'
 					info={settings.playerBlack as PlayerInfo}
 					clearMove={blackChat.clear}
+					timeLeft={timeLeft}
+					defaultTimeLeft={settings.secondsPerMove}
 				/>
 			</div>
 		</div>
