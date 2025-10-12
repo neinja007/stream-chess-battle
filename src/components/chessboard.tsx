@@ -1,4 +1,5 @@
 import { Move } from '@/hooks/useChat';
+import { testAndTransformMove } from '@/lib/test-transform-move';
 import { Chess } from 'chess.js';
 import { Arrow, Chessboard as ChessboardComponent } from 'react-chessboard';
 
@@ -6,9 +7,10 @@ type ChessboardProps = {
 	game: string;
 	moves: Move[];
 	orientation: 'white' | 'black';
+	onMove: (move: string) => void;
 };
 
-export const Chessboard = ({ game, moves, orientation }: ChessboardProps) => {
+export const Chessboard = ({ game, moves, orientation, onMove }: ChessboardProps) => {
 	const arrows = moves
 		.sort((a, b) => b.count - a.count)
 		.slice(0, 5)
@@ -57,7 +59,13 @@ export const Chessboard = ({ game, moves, orientation }: ChessboardProps) => {
 					backgroundColor: 'oklch(74.6% 0.16 232.661)'
 				},
 				arrows,
-				allowDrawingArrows: process.env.NEXT_PUBLIC_ENABLE_DEVTOOLS === 'true' ? true : false
+				allowDrawingArrows: process.env.NEXT_PUBLIC_ENABLE_DEVTOOLS === 'true' ? true : false,
+				onPieceDrop: ({ sourceSquare, targetSquare }) => {
+					const move = testAndTransformMove(game, `${sourceSquare}${targetSquare}`);
+					if (!move) return false;
+					onMove(move);
+					return true;
+				}
 				// squareRenderer: ({ piece, children }) => {
 				// 	if (piece) {
 				// 		const isTwitchPiece = (piece.pieceType.startsWith('w') ? 1 : 0) ^ (whoPlaysWhite === 'twitch' ? 1 : 0);

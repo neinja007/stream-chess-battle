@@ -42,11 +42,9 @@ export const Playing = ({ settings, setStatus }: PlayingProps) => {
 
 	useEffect(() => {
 		if (result) {
-			whiteChat.clear();
-			blackChat.clear();
 			setPaused(true);
 		}
-	}, [result, whiteChat, blackChat]);
+	}, [result]);
 
 	const executeMove = useCallback(() => {
 		const foundMove = findMove(turn === 'w' ? whiteChat.moves : blackChat.moves, settings.moveSelection!, legalMoves);
@@ -81,6 +79,7 @@ export const Playing = ({ settings, setStatus }: PlayingProps) => {
 				<div className='max-w-xl rounded-xl overflow-hidden'>
 					<Chessboard
 						game={position}
+						onMove={move}
 						moves={turn === 'w' ? whiteChat.moves : blackChat.moves}
 						orientation={activeOrientation}
 					/>
