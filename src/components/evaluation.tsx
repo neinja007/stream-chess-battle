@@ -9,13 +9,15 @@ type EvaluationProps = {
 export const Evaluation = ({ game, orientation, result }: EvaluationProps) => {
 	const { data: evaluation } = useEvaluation(game);
 
-	const evalValue = evaluation?.evaluation ?? 0;
+	const evalValue = evaluation?.evaluation && parseFloat(evaluation?.evaluation.toString());
 	let barHeight = 50;
-	if (typeof evalValue === 'number') {
+	if (evalValue) {
 		const clampedEval = Math.max(-1000, Math.min(1000, evalValue));
 		// Use a sigmoid to map evaluation to [0, 100]%
 		const sigmoid = (x: number) => 1 / (1 + Math.exp(-x / 300));
 		barHeight = sigmoid(clampedEval) * 100;
+	} else if (evaluation?.mate) {
+		barHeight = parseFloat(evaluation.mate) > 0 ? 100 : 0;
 	}
 
 	return (
@@ -49,7 +51,9 @@ export const Evaluation = ({ game, orientation, result }: EvaluationProps) => {
 							: result === 'black'
 							? '0-1'
 							: '½-½'
-						: isNaN(evalValue) || !isFinite(evalValue)
+						: evaluation?.mate
+						? 'M' + evaluation?.mate
+						: evalValue === undefined || isNaN(evalValue) || !isFinite(evalValue)
 						? '∞'
 						: (evalValue / 100).toFixed(Math.abs(evalValue) > 1000 ? 0 : 1)}
 				</div>
