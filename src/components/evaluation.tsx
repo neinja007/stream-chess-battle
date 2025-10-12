@@ -52,7 +52,7 @@ export const Evaluation = ({ game, orientation, result }: EvaluationProps) => {
 							? '0-1'
 							: '½-½'
 						: evaluation?.mate
-						? 'M' + evaluation?.mate
+						? 'M' + Math.abs(parseInt(evaluation?.mate))
 						: evalValue === undefined || isNaN(evalValue) || !isFinite(evalValue)
 						? '∞'
 						: (evalValue / 100).toFixed(Math.abs(evalValue) > 1000 ? 0 : 1)}
