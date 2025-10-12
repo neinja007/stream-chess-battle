@@ -1,4 +1,5 @@
 import { useEvaluation } from '@/hooks/useEvaluation';
+import { cn } from '@/lib/utils';
 
 type EvaluationProps = {
 	game: string;
@@ -7,7 +8,7 @@ type EvaluationProps = {
 };
 
 export const Evaluation = ({ game, orientation, result }: EvaluationProps) => {
-	const { data: evaluation } = useEvaluation(game);
+	const { data: evaluation, fetchStatus } = useEvaluation(game);
 
 	const evalValue = evaluation?.evaluation && parseFloat(evaluation?.evaluation.toString());
 	let barHeight = 50;
@@ -23,7 +24,10 @@ export const Evaluation = ({ game, orientation, result }: EvaluationProps) => {
 	return (
 		<>
 			<div
-				className='w-8 bg-gray-700 flex-1 self-stretch max-w-8 rounded-lg overflow-hidden flex flex-col justify-between'
+				className={cn(
+					'w-8 bg-gray-700 flex-1 self-stretch max-w-8 rounded-lg overflow-hidden flex flex-col justify-between',
+					fetchStatus === 'fetching' && !result && 'animate-pulse'
+				)}
 				style={{ rotate: orientation === 'white' ? '180deg' : '0deg' }}
 			>
 				{!result && (
@@ -42,8 +46,10 @@ export const Evaluation = ({ game, orientation, result }: EvaluationProps) => {
 					<div className='h-full bg-white transition-all duration-500 ease-in-out' style={{ height: `50%` }} />
 				)}
 				<div
-					className='text-xs text-center my-2 text-red-500 absolute bottom-0 left-0 right-0 font-bold'
-					style={{ rotate: orientation === 'white' ? '180deg' : '0deg' }}
+					className='text-xs text-center my-1 bg-gray-700 text-white w-fit mx-auto px-1 rounded-md absolute bottom-0 left-0 right-0 font-bold'
+					style={{
+						rotate: orientation === 'white' ? '180deg' : '0deg'
+					}}
 				>
 					{result
 						? result === 'white'
