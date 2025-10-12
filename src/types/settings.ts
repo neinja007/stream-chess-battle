@@ -4,6 +4,7 @@ export type GameSettings = {
 	playerBlack: Player;
 	secondsPerMove: number;
 	evaluationBar: 'show' | 'hide' | undefined;
+	voteRestriction: 'noRestriction' | '1VotePerUser' | 'uniqueVotesPerUser' | undefined;
 };
 
 export type PlaySettings = {

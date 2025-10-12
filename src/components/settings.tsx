@@ -6,7 +6,7 @@ import { SiTwitch, SiYoutube } from '@icons-pack/react-simple-icons';
 import { InputGroup, InputGroupAddon, InputGroupInput } from '@/components/ui/input-group';
 import { Slider } from '@/components/ui/slider';
 import { Switch } from '@/components/ui/switch';
-import { ChartNoAxesColumnDecreasing, Dices, Save, Weight } from 'lucide-react';
+import { ChartNoAxesColumnDecreasing, Dices, Save, Skull, User, Users, Weight } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { getSettingsCompletion } from '@/lib/settings-completion';
 
@@ -155,6 +155,23 @@ export const Settings = ({ settings, setSettings, setStatus }: SettingsProps) =>
 						{ label: 'Most votes', value: 'mostVotes', icon: Dices },
 						{ label: 'Weighted random', value: 'weightedRandom', icon: Weight },
 						{ label: 'Random', value: 'random', icon: ChartNoAxesColumnDecreasing }
+					]}
+					placeholder='Select an option'
+				/>
+			</SettingsSection>
+			<SettingsSection title='Vote restriction' completed={!!settings.voteRestriction} inline>
+				<SimpleSelect
+					value={settings.voteRestriction}
+					onChange={(value) =>
+						setSettings({
+							...settings,
+							voteRestriction: value as 'noRestriction' | '1VotePerUser' | 'uniqueVotesPerUser'
+						})
+					}
+					options={[
+						{ label: 'No restriction', value: 'noRestriction', icon: Skull },
+						{ label: '1 Vote per user', value: '1VotePerUser', icon: User },
+						{ label: 'Unique votes per user', value: 'uniqueVotesPerUser', icon: Users }
 					]}
 					placeholder='Select an option'
 				/>

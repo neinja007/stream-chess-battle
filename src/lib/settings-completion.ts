@@ -7,7 +7,8 @@ export const getSettingsCompletion = (settings: GameSettings): number => {
 		settings.playerBlack.platform !== undefined,
 		settings.playerWhite.channel !== '',
 		settings.playerBlack.channel !== '',
-		settings.secondsPerMove !== 0
+		settings.secondsPerMove !== 0,
+		settings.voteRestriction !== undefined
 		// settings.evaluationBar !== undefined
 	];
 
