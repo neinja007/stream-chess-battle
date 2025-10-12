@@ -2,7 +2,7 @@ import { Move } from '@/hooks/useChat';
 import { cn } from '@/lib/utils';
 import { PlayerInfo } from '@/types/settings';
 import { SiTwitch, SiYoutube } from '@icons-pack/react-simple-icons';
-import { Ban } from 'lucide-react';
+import { Ban, User } from 'lucide-react';
 
 type ChatProps = {
 	moves: Move[];
@@ -29,10 +29,20 @@ export const Chat = ({ moves, info, color, clearMove, activeTurn, timeLeft, defa
 				<div
 					className={cn(
 						'flex items-center gap-2 min-w-0 flex-1',
-						info.platform === 'twitch' ? 'text-purple-500' : 'text-red-500'
+						info.platform === 'twitch'
+							? 'text-purple-500'
+							: info.platform === 'youtube'
+							? 'text-red-500'
+							: 'text-green-500'
 					)}
 				>
-					{info.platform === 'twitch' ? <SiTwitch className='shrink-0' /> : <SiYoutube className='shrink-0' />}
+					{info.platform === 'twitch' ? (
+						<SiTwitch className='shrink-0' />
+					) : info.platform === 'youtube' ? (
+						<SiYoutube className='shrink-0' />
+					) : (
+						<User className='shrink-0' />
+					)}
 					<span className='truncate min-w-0'>{info.channel}</span>
 				</div>
 				<div
@@ -78,7 +88,7 @@ export const Chat = ({ moves, info, color, clearMove, activeTurn, timeLeft, defa
 									</button>
 								))
 						) : (
-							<div className='text-center'>Start voting!</div>
+							<div className='text-center'>{info.platform === 'self' ? 'Your turn' : 'Start voting'}!</div>
 						)
 					) : (
 						<div className='text-center text-muted-foreground'>Await your turn!</div>

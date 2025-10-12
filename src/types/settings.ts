@@ -14,11 +14,11 @@ export type PlaySettings = {
 };
 
 export type Player = {
-	platform: 'twitch' | 'youtube' | undefined;
+	platform: 'twitch' | 'youtube' | 'self' | undefined;
 	channel: string;
 };
 
 export type PlayerInfo = {
-	platform: 'twitch' | 'youtube';
+	platform: 'twitch' | 'youtube' | 'self';
 	channel: string;
 };

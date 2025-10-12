@@ -11,5 +11,6 @@ export const defaultGameSettings: DefaultSettings = {
 		channel: ''
 	},
 	secondsPerMove: 0,
-	evaluationBar: 'show'
+	evaluationBar: 'show',
+	voteRestriction: undefined
 };

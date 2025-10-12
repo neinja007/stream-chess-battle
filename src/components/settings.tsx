@@ -32,17 +32,18 @@ export const Settings = ({ settings, setSettings, setStatus }: SettingsProps) =>
 					onChange={(value) =>
 						setSettings({
 							...settings,
-							playerWhite: { ...settings.playerWhite, platform: value as 'twitch' | 'youtube' }
+							playerWhite: { ...settings.playerWhite, platform: value as 'twitch' | 'youtube' | 'self' }
 						})
 					}
 					options={[
 						{ label: 'Twitch', value: 'twitch', icon: SiTwitch },
-						{ label: 'YouTube', value: 'youtube', icon: SiYoutube }
+						{ label: 'YouTube', value: 'youtube', icon: SiYoutube },
+						{ label: 'Self', value: 'self', icon: User }
 					]}
 					placeholder='Select platform'
 				/>
 				<InputGroup>
-					{settings.playerWhite.platform && (
+					{settings.playerWhite.platform && settings.playerWhite.platform !== 'self' && (
 						<InputGroupAddon>
 							{settings.playerWhite.platform === 'twitch'
 								? 'twitch.tv/'
@@ -52,7 +53,7 @@ export const Settings = ({ settings, setSettings, setStatus }: SettingsProps) =>
 						</InputGroupAddon>
 					)}
 					<InputGroupInput
-						placeholder='Channel'
+						placeholder={settings.playerWhite.platform === 'self' ? 'Your name' : 'Channel'}
 						value={settings.playerWhite.channel}
 						onChange={(e) =>
 							setSettings({
@@ -72,17 +73,18 @@ export const Settings = ({ settings, setSettings, setStatus }: SettingsProps) =>
 					onChange={(value) =>
 						setSettings({
 							...settings,
-							playerBlack: { ...settings.playerBlack, platform: value as 'twitch' | 'youtube' }
+							playerBlack: { ...settings.playerBlack, platform: value as 'twitch' | 'youtube' | 'self' }
 						})
 					}
 					options={[
 						{ label: 'Twitch', value: 'twitch', icon: SiTwitch },
-						{ label: 'YouTube', value: 'youtube', icon: SiYoutube }
+						{ label: 'YouTube', value: 'youtube', icon: SiYoutube },
+						{ label: 'Self', value: 'self', icon: User }
 					]}
 					placeholder='Select platform'
 				/>
 				<InputGroup>
-					{settings.playerBlack.platform && (
+					{settings.playerBlack.platform && settings.playerBlack.platform !== 'self' && (
 						<InputGroupAddon>
 							{settings.playerBlack.platform === 'twitch'
 								? 'twitch.tv/'
@@ -92,7 +94,7 @@ export const Settings = ({ settings, setSettings, setStatus }: SettingsProps) =>
 						</InputGroupAddon>
 					)}
 					<InputGroupInput
-						placeholder='Channel'
+						placeholder={settings.playerBlack.platform === 'self' ? 'Your name' : 'Channel'}
 						value={settings.playerBlack.channel}
 						onChange={(e) =>
 							setSettings({
