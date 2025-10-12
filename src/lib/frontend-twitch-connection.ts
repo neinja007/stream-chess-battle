@@ -24,27 +24,16 @@ export class FrontendTwitchConnection {
 	}
 
 	connect(): void {
-		console.log('Starting Twitch connection process...');
-
-		// Validate channel name
 		if (!this.options.channel || this.options.channel.trim() === '') {
 			console.error('Channel name validation failed: empty or missing');
 			this.options.onError('Channel name is required');
 			return;
 		}
 
-		// Clean channel name (remove # if present, convert to lowercase)
-		const cleanChannel = this.options.channel.replace(/^#/, '').toLowerCase().trim();
-		if (cleanChannel !== this.options.channel) {
-			console.log(`Cleaned channel name: "${this.options.channel}" -> "${cleanChannel}"`);
-		}
-
 		const tmiUrl = 'wss://irc-ws.chat.twitch.tv:443';
-		console.log('Connecting to Twitch IRC:', tmiUrl, 'for channel:', cleanChannel);
 
 		try {
 			this.ws = new WebSocket(tmiUrl);
-			console.log('WebSocket created successfully');
 		} catch (error) {
 			console.error('Failed to create WebSocket:', error);
 			this.options.onError('Failed to create WebSocket connection');
@@ -52,7 +41,6 @@ export class FrontendTwitchConnection {
 		}
 
 		this.ws.onopen = () => {
-			console.log('WebSocket connection opened');
 			this.connected = true;
 
 			if (this.connectionTimeout) {
@@ -100,7 +88,6 @@ export class FrontendTwitchConnection {
 
 		const username = 'justinfan' + Math.floor(Math.random() * 100000);
 		const cleanChannel = this.options.channel.replace(/^#/, '').toLowerCase().trim();
-		console.log('Authenticating with Twitch IRC as:', username);
 
 		try {
 			this.ws.send('PASS SCHMOOPIIE');
@@ -130,9 +117,7 @@ export class FrontendTwitchConnection {
 		}
 
 		if (message.includes('001')) {
-			console.log('Successfully authenticated with Twitch IRC');
 		} else if (message.includes('JOIN')) {
-			console.log('Successfully joined channel');
 		} else if (message.includes('ERROR') || message.includes('NOTICE')) {
 			console.warn('Twitch IRC notice/error:', message);
 			if (message.includes('Login authentication failed')) {
@@ -141,11 +126,7 @@ export class FrontendTwitchConnection {
 				this.options.onError('Channel does not exist or is not available');
 			}
 		} else if (message.includes('353')) {
-			// RPL_NAMREPLY - user list received
-			console.log('Received user list for channel');
 		} else if (message.includes('366')) {
-			// RPL_ENDOFNAMES - end of user list
-			console.log('Finished receiving user list');
 		}
 
 		const isPRIVMSG = message.includes('PRIVMSG');

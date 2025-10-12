@@ -66,15 +66,6 @@ export const useChat = ({
 				}
 			});
 
-			eventSourceRef.current.addEventListener('system', (event) => {
-				try {
-					const data = JSON.parse(event.data);
-					console.log('System message:', data.message);
-				} catch (error) {
-					console.error('Error parsing system message:', error);
-				}
-			});
-
 			eventSourceRef.current.addEventListener('error', (event) => {
 				console.error('EventSource error:', event);
 				setStatus('disconnected');
@@ -98,7 +89,6 @@ export const useChat = ({
 		const twitchConnection = new FrontendTwitchConnection({
 			channel: info.channel,
 			onMessage: (message) => {
-				console.log('Twitch message:', message);
 				processMove(testAndTransformMove, message, setMoves);
 			},
 			onError: (error) => {
