@@ -1,4 +1,5 @@
 import { processMove } from '@/lib/process-move';
+import { FrontendTwitchConnection } from '@/lib/frontend-twitch-connection';
 import { useState, useEffect, useCallback, useRef } from 'react';
 
 type ChatStatus = 'active' | 'disconnected';
@@ -15,7 +16,7 @@ export const useChat = ({
 	info
 }: {
 	info: {
-		platform: 'twitch' | 'youtube';
+		platform: 'twitch' | 'youtube' | 'self';
 		channel: string;
 	};
 	enable: boolean;
@@ -23,6 +24,7 @@ export const useChat = ({
 }) => {
 	const [moves, setMoves] = useState<Move[]>([]);
 	const [status, setStatus] = useState<ChatStatus>('disconnected');
+	const twitchConnectionRef = useRef<FrontendTwitchConnection | null>(null);
 	const eventSourceRef = useRef<EventSource | null>(null);
 
 	const clear = useCallback((move?: string) => {
@@ -34,64 +36,93 @@ export const useChat = ({
 	}, []);
 
 	useEffect(() => {
-		if (!info.channel) {
+		if (!info.channel || info.platform === 'self') {
 			setStatus('disconnected');
 			return;
 		}
 
 		if (!enable) {
-			if (eventSourceRef.current) {
-				eventSourceRef.current.close();
-				eventSourceRef.current = null;
+			if (twitchConnectionRef.current) {
+				twitchConnectionRef.current.close();
+				twitchConnectionRef.current = null;
 			}
 			setStatus('disconnected');
 			return;
 		}
 
-		if (eventSourceRef.current) {
-			eventSourceRef.current.close();
-			eventSourceRef.current = null;
+		if (info.platform !== 'twitch') {
+			const url = `/api/${info.platform}/chat${
+				info.channel === 'simulate' ? '/simulate' : ''
+			}?channel_id=${encodeURIComponent(info.channel)}`;
+			eventSourceRef.current = new EventSource(url);
+
+			setStatus('active');
+
+			eventSourceRef.current.addEventListener('message', (event: MessageEvent<string>) => {
+				try {
+					processMove(testAndTransformMove, JSON.parse(event.data), setMoves);
+				} catch (error) {
+					console.error('Error parsing message:', error);
+				}
+			});
+
+			eventSourceRef.current.addEventListener('system', (event) => {
+				try {
+					const data = JSON.parse(event.data);
+					console.log('System message:', data.message);
+				} catch (error) {
+					console.error('Error parsing system message:', error);
+				}
+			});
+
+			eventSourceRef.current.addEventListener('error', (event) => {
+				console.error('EventSource error:', event);
+				setStatus('disconnected');
+			});
+
+			eventSourceRef.current.onopen = () => {
+				setStatus('active');
+			};
+
+			return () => {
+				eventSourceRef.current?.close();
+				setStatus('disconnected');
+			};
 		}
 
-		const url = `/api/${info.platform}/chat${
-			info.channel === 'simulate' ? '/simulate' : ''
-		}?channel_id=${encodeURIComponent(info.channel)}`;
-		const eventSource = new EventSource(url);
-		eventSourceRef.current = eventSource;
+		if (twitchConnectionRef.current) {
+			twitchConnectionRef.current.close();
+			twitchConnectionRef.current = null;
+		}
 
-		setStatus('active');
-
-		eventSource.addEventListener('message', (event: MessageEvent<string>) => {
-			try {
-				// Only process moves when it's our turn (we're already connected only when it's our turn)
-				processMove(testAndTransformMove, JSON.parse(event.data), setMoves);
-			} catch (error) {
-				console.error('Error parsing message:', error);
+		const twitchConnection = new FrontendTwitchConnection({
+			channel: info.channel,
+			onMessage: (message) => {
+				console.log('Twitch message:', message);
+				processMove(testAndTransformMove, message, setMoves);
+			},
+			onError: (error) => {
+				console.error('Twitch connection error:', error);
+				setStatus('disconnected');
+			},
+			onSystemMessage: (message) => {
+				console.log('Twitch system message:', message);
+			},
+			onConnect: () => {
+				setStatus('active');
+			},
+			onDisconnect: () => {
+				setStatus('disconnected');
 			}
 		});
 
-		eventSource.addEventListener('system', (event) => {
-			try {
-				const data = JSON.parse(event.data);
-				console.log('System message:', data.message);
-			} catch (error) {
-				console.error('Error parsing system message:', error);
-			}
-		});
-
-		eventSource.addEventListener('error', (event) => {
-			console.error('EventSource error:', event);
-			setStatus('disconnected');
-		});
-
-		eventSource.onopen = () => {
-			setStatus('active');
-		};
+		twitchConnectionRef.current = twitchConnection;
+		twitchConnection.connect();
 
 		return () => {
-			if (eventSourceRef.current) {
-				eventSourceRef.current.close();
-				eventSourceRef.current = null;
+			if (twitchConnectionRef.current) {
+				twitchConnectionRef.current.close();
+				twitchConnectionRef.current = null;
 			}
 			setStatus('disconnected');
 		};
@@ -99,8 +130,8 @@ export const useChat = ({
 
 	useEffect(() => {
 		return () => {
-			if (eventSourceRef.current) {
-				eventSourceRef.current.close();
+			if (twitchConnectionRef.current) {
+				twitchConnectionRef.current.close();
 			}
 		};
 	}, []);
