@@ -7,7 +7,7 @@ type ChessboardProps = {
 	game: string;
 	moves: Move[];
 	orientation: 'white' | 'black';
-	onMove: (move: string) => void;
+	onMove?: (move: string) => void;
 };
 
 export const Chessboard = ({ game, moves, orientation, onMove }: ChessboardProps) => {
@@ -60,12 +60,14 @@ export const Chessboard = ({ game, moves, orientation, onMove }: ChessboardProps
 				},
 				arrows,
 				allowDrawingArrows: process.env.NEXT_PUBLIC_ENABLE_DEVTOOLS === 'true' ? true : false,
-				onPieceDrop: ({ sourceSquare, targetSquare }) => {
-					const move = testAndTransformMove(game, `${sourceSquare}${targetSquare}`);
-					if (!move) return false;
-					onMove(move);
-					return true;
-				}
+				onPieceDrop: onMove
+					? ({ sourceSquare, targetSquare }) => {
+							const move = testAndTransformMove(game, `${sourceSquare}${targetSquare}`);
+							if (!move) return false;
+							onMove(move);
+							return true;
+					  }
+					: undefined
 				// squareRenderer: ({ piece, children }) => {
 				// 	if (piece) {
 				// 		const isTwitchPiece = (piece.pieceType.startsWith('w') ? 1 : 0) ^ (whoPlaysWhite === 'twitch' ? 1 : 0);
