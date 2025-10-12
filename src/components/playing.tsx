@@ -70,6 +70,20 @@ export const Playing = ({ settings, setStatus }: PlayingProps) => {
 
 	const activeOrientation = orientation === 'active' ? (turn === 'w' ? 'white' : 'black') : orientation;
 
+	const executeSelfMove = (moveNotation: string) => {
+		move(moveNotation);
+		setTimeLeft(settings.secondsPerMove);
+	};
+
+	const selfMove =
+		turn === 'w'
+			? settings.playerWhite.platform === 'self'
+				? executeSelfMove
+				: undefined
+			: settings.playerBlack.platform === 'self'
+			? executeSelfMove
+			: undefined;
+
 	return (
 		<div className='w-full max-w-7xl mx-auto pt-24 flex gap-5'>
 			<div className='flex items-center gap-4 shrink-0'>
@@ -79,7 +93,7 @@ export const Playing = ({ settings, setStatus }: PlayingProps) => {
 				<div className='max-w-xl rounded-xl overflow-hidden'>
 					<Chessboard
 						game={position}
-						onMove={move}
+						onMove={selfMove}
 						moves={turn === 'w' ? whiteChat.moves : blackChat.moves}
 						orientation={activeOrientation}
 					/>
