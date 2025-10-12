@@ -40,6 +40,14 @@ export const Playing = ({ settings, setStatus }: PlayingProps) => {
 		testAndTransformMove: testAndTransformMoveFunction
 	});
 
+	useEffect(() => {
+		if (result) {
+			whiteChat.clear();
+			blackChat.clear();
+			setPaused(true);
+		}
+	}, [result, whiteChat, blackChat]);
+
 	const executeMove = useCallback(() => {
 		const foundMove = findMove(turn === 'w' ? whiteChat.moves : blackChat.moves, settings.moveSelection!, legalMoves);
 		move(foundMove);
@@ -127,7 +135,7 @@ export const Playing = ({ settings, setStatus }: PlayingProps) => {
 				<hr className='w-full border-t border-blue-500 my-4 mt-2' />
 				<div className='text-left w-full mb-2 text-lg'>Game controls</div>
 				<div className='grid grid-cols-2 gap-2 w-full'>
-					<Button onClick={() => setPaused(!paused)}>
+					<Button onClick={() => setPaused(!paused)} disabled={!!result}>
 						{paused ? <Play /> : <Pause />} {paused ? 'Resume' : 'Pause'}
 					</Button>
 					<Button
