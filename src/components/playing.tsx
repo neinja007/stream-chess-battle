@@ -11,6 +11,7 @@ import { ArrowUpDown, Clock, Cog, Dices, Pause, Play, RotateCcw, Settings, Trash
 import { Button } from './ui/button';
 import Link from 'next/link';
 import { moveSelectionMap } from '@/data/move-selection-map';
+import { voteRestrictionMap } from '@/data/vote-restriction-map';
 
 type PlayingProps = {
 	settings: SettingsType;
@@ -177,7 +178,10 @@ export const Playing = ({ settings, setStatus }: PlayingProps) => {
 				</div>
 				<div className='text-left w-full mb-2 flex items-center gap-1'>
 					<Cog className='size-4' />
-					Vote restriction: <span className='font-bold'>1 Vote per user</span>
+					Vote restriction:{' '}
+					<span className='font-bold'>
+						{voteRestrictionMap[settings.voteRestriction as keyof typeof voteRestrictionMap]}
+					</span>
 				</div>
 			</div>
 		</div>
