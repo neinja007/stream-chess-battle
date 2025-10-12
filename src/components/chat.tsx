@@ -18,7 +18,12 @@ export const Chat = ({ moves, info, color, clearMove, activeTurn, timeLeft, defa
 	const totalCount = moves.reduce((acc, move) => acc + move.count, 0);
 
 	return (
-		<div className='flex flex-col gap-4 h-full overflow-hidden'>
+		<div
+			className={cn(
+				'flex flex-col gap-4 h-full overflow-hidden border p-1 rounded-xl px-2 transition-all',
+				activeTurn ? 'border-blue-500 shadow-lg shadow-blue-500/50' : 'border-slate-800'
+			)}
+		>
 			<h1 className='text-lg font-semibold shrink-0 flex items-center gap-2 min-w-0'>
 				<div
 					className={cn(
@@ -79,7 +84,9 @@ export const Chat = ({ moves, info, color, clearMove, activeTurn, timeLeft, defa
 			</div>
 			<div className='flex justify-between'>
 				<span>{moves.reduce((acc, move) => acc + move.count, 0)} Votes</span>
-				<div className={cn('rounded-md text-black px-2 py-0.5', activeTurn ? 'bg-white' : 'bg-gray-500')}>
+				<div
+					className={cn('rounded-md text-black px-2 py-0.5 transition-all', activeTurn ? 'bg-white' : 'bg-gray-500')}
+				>
 					{activeTurn ? timeLeft.toFixed(2) : defaultTimeLeft.toFixed(2)}
 				</div>
 			</div>
