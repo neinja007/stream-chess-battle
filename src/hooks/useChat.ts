@@ -39,6 +39,15 @@ export const useChat = ({
 			return;
 		}
 
+		if (!activeTurn) {
+			if (eventSourceRef.current) {
+				eventSourceRef.current.close();
+				eventSourceRef.current = null;
+			}
+			setStatus('disconnected');
+			return;
+		}
+
 		if (eventSourceRef.current) {
 			eventSourceRef.current.close();
 			eventSourceRef.current = null;
@@ -54,9 +63,8 @@ export const useChat = ({
 
 		eventSource.addEventListener('message', (event: MessageEvent<string>) => {
 			try {
-				if (activeTurn) {
-					processMove(testAndTransformMove, JSON.parse(event.data), setMoves);
-				}
+				// Only process moves when it's our turn (we're already connected only when it's our turn)
+				processMove(testAndTransformMove, JSON.parse(event.data), setMoves);
 			} catch (error) {
 				console.error('Error parsing message:', error);
 			}
