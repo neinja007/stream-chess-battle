@@ -10,7 +10,7 @@ export type Move = {
 };
 
 export const useChat = ({
-	activeTurn,
+	enable,
 	testAndTransformMove,
 	info
 }: {
@@ -18,7 +18,7 @@ export const useChat = ({
 		platform: 'twitch' | 'youtube';
 		channel: string;
 	};
-	activeTurn: boolean;
+	enable: boolean;
 	testAndTransformMove: (move: string) => string | undefined;
 }) => {
 	const [moves, setMoves] = useState<Move[]>([]);
@@ -39,7 +39,7 @@ export const useChat = ({
 			return;
 		}
 
-		if (!activeTurn) {
+		if (!enable) {
 			if (eventSourceRef.current) {
 				eventSourceRef.current.close();
 				eventSourceRef.current = null;
@@ -95,7 +95,7 @@ export const useChat = ({
 			}
 			setStatus('disconnected');
 		};
-	}, [info, activeTurn, testAndTransformMove]);
+	}, [info, enable, testAndTransformMove]);
 
 	useEffect(() => {
 		return () => {

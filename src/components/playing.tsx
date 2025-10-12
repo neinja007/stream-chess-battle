@@ -19,7 +19,7 @@ type PlayingProps = {
 };
 
 export const Playing = ({ settings, setStatus }: PlayingProps) => {
-	const { position, move, gameOver, reset, turn, legalMoves } = useChessGame();
+	const { position, move, reset, turn, legalMoves, result } = useChessGame();
 	const [timeLeft, setTimeLeft] = useState(settings.secondsPerMove);
 	const [paused, setPaused] = useState(true);
 	const [orientation, setOrientation] = useState<'white' | 'black' | 'active'>('white');
@@ -30,13 +30,13 @@ export const Playing = ({ settings, setStatus }: PlayingProps) => {
 
 	const whiteChat = useChat({
 		info: settings.playerWhite as PlayerInfo,
-		activeTurn: activeTurnWhite,
+		enable: activeTurnWhite && !result,
 		testAndTransformMove: testAndTransformMoveFunction
 	});
 
 	const blackChat = useChat({
 		info: settings.playerBlack as PlayerInfo,
-		activeTurn: !activeTurnWhite,
+		enable: !activeTurnWhite && !result,
 		testAndTransformMove: testAndTransformMoveFunction
 	});
 
@@ -67,7 +67,9 @@ export const Playing = ({ settings, setStatus }: PlayingProps) => {
 	return (
 		<div className='w-full max-w-7xl mx-auto pt-24 flex gap-5'>
 			<div className='flex items-center gap-4 shrink-0'>
-				{settings.evaluationBar === 'show' && <Evaluation game={position} orientation={activeOrientation} />}
+				{settings.evaluationBar === 'show' && (
+					<Evaluation game={position} orientation={activeOrientation} result={result} />
+				)}
 				<div className='max-w-xl rounded-xl overflow-hidden'>
 					<Chessboard
 						game={position}
@@ -79,6 +81,7 @@ export const Playing = ({ settings, setStatus }: PlayingProps) => {
 			<div className='grid grid-rows-2 gap-4 h-[640px] w-64'>
 				{activeOrientation !== 'white' && (
 					<Chat
+						result={result}
 						activeTurn={turn === 'w'}
 						moves={whiteChat.moves}
 						color='white'
@@ -89,7 +92,8 @@ export const Playing = ({ settings, setStatus }: PlayingProps) => {
 					/>
 				)}
 				<Chat
-					activeTurn={turn === 'b'}
+					result={result}
+					activeTurn={!activeTurnWhite}
 					moves={blackChat.moves}
 					color='black'
 					info={settings.playerBlack as PlayerInfo}
@@ -99,6 +103,7 @@ export const Playing = ({ settings, setStatus }: PlayingProps) => {
 				/>
 				{activeOrientation === 'white' && (
 					<Chat
+						result={result}
 						activeTurn={turn === 'w'}
 						moves={whiteChat.moves}
 						color='white'
