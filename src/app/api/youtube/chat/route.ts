@@ -214,3 +214,127 @@ export async function GET(req: Request) {
 		}
 	});
 }
+
+// export const runtime = 'nodejs';
+// export const dynamic = 'force-dynamic';
+// export const revalidate = 0;
+
+// import YouTube from 'youtube-live-chat';
+
+// interface YouTubeMessageData {
+// 	snippet: {
+// 		displayMessage: string;
+// 	};
+// 	authorDetails?: {
+// 		displayName: string;
+// 	};
+// }
+
+// function writeSse(controller: ReadableStreamDefaultController<Uint8Array>, event: string, data: unknown) {
+// 	const payload = typeof data === 'string' ? data : JSON.stringify(data);
+// 	const sse = `event: ${event}\n` + `data: ${payload}\n\n`;
+// 	controller.enqueue(new TextEncoder().encode(sse));
+// }
+
+// export async function GET(req: Request) {
+// 	const { searchParams } = new URL(req.url);
+// 	const channelId = searchParams.get('channel_id');
+// 	if (!channelId) {
+// 		return new Response(JSON.stringify({ error: 'Missing required query param: channel_id' }), {
+// 			status: 400,
+// 			headers: { 'content-type': 'application/json' }
+// 		});
+// 	}
+
+// 	const apiKey = process.env.GCC_API_KEY;
+// 	if (!apiKey) {
+// 		return new Response(JSON.stringify({ error: 'YouTube API key not configured' }), {
+// 			status: 500,
+// 			headers: { 'content-type': 'application/json' }
+// 		});
+// 	}
+
+// 	const stream = new ReadableStream<Uint8Array>({
+// 		start(controller) {
+// 			let keepAlive: ReturnType<typeof setInterval> | null = null;
+// 			let connected = false;
+// 			let yt: YouTube | null = null;
+
+// 			const closeAll = (reason?: string) => {
+// 				if (keepAlive) {
+// 					clearInterval(keepAlive);
+// 					keepAlive = null;
+// 				}
+// 				if (yt) {
+// 					yt.stop();
+// 					yt = null;
+// 				}
+// 				if (!connected) {
+// 					controller.error(new Error(reason || 'Connection closed'));
+// 				} else {
+// 					controller.close();
+// 				}
+// 			};
+
+// 			const initializeConnection = async () => {
+// 				try {
+// 					writeSse(controller, 'system', { message: `Connecting to YouTube Live Chat for channel: ${channelId}` });
+
+// 					yt = new YouTube(channelId, apiKey);
+
+// 					yt.on('ready', () => {
+// 						console.log('YouTube Live Chat ready!');
+// 						connected = true;
+// 						writeSse(controller, 'system', { message: 'Connected to YouTube Live Chat' });
+
+// 						yt!.listen(1000);
+// 					});
+
+// 					yt.on('message', (data: YouTubeMessageData) => {
+// 						if (data.snippet && data.snippet.displayMessage) {
+// 							const user = data.authorDetails?.displayName || 'Unknown';
+// 							const text = data.snippet.displayMessage;
+// 							writeSse(controller, 'message', { user, text });
+// 						}
+// 					});
+
+// 					yt.on('error', (error: Error) => {
+// 						console.error('YouTube Live Chat error:', error);
+// 						writeSse(controller, 'error', {
+// 							message: 'YouTube Live Chat error',
+// 							error: String(error)
+// 						});
+// 						closeAll('youtube error');
+// 					});
+
+// 					keepAlive = setInterval(() => {
+// 						controller.enqueue(new TextEncoder().encode(': keep-alive\n\n'));
+// 					}, 15000);
+// 				} catch (error) {
+// 					writeSse(controller, 'error', {
+// 						message: 'YouTube connection error',
+// 						error: String(error)
+// 					});
+// 					closeAll('youtube error');
+// 				}
+// 			};
+
+// 			initializeConnection();
+
+// 			req.signal.addEventListener('abort', () => {
+// 				writeSse(controller, 'system', { message: 'Client disconnected' });
+// 				closeAll('client aborted');
+// 			});
+// 		},
+// 		cancel() {}
+// 	});
+
+// 	return new Response(stream, {
+// 		headers: {
+// 			'content-type': 'text/event-stream',
+// 			'cache-control': 'no-cache, no-transform',
+// 			connection: 'keep-alive',
+// 			'x-accel-buffering': 'no'
+// 		}
+// 	});
+// }
