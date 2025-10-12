@@ -41,7 +41,7 @@ export const Chessboard = ({ game, moves, orientation, onMove }: ChessboardProps
 				position: game,
 				animationDurationInMs: 1000,
 				boardOrientation: orientation,
-				allowDragging: process.env.NEXT_PUBLIC_ENABLE_DEVTOOLS === 'true' ? true : false,
+				allowDragging: !!onMove,
 				numericNotationStyle: {
 					fontSize: '16px',
 					fontWeight: 'bold'
