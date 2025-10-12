@@ -43,8 +43,9 @@ export const Playing = ({ settings, setStatus }: PlayingProps) => {
 	useEffect(() => {
 		if (result) {
 			setPaused(true);
+			setTimeLeft(settings.secondsPerMove);
 		}
-	}, [result]);
+	}, [result, settings.secondsPerMove]);
 
 	const executeMove = useCallback(() => {
 		const foundMove = findMove(turn === 'w' ? whiteChat.moves : blackChat.moves, settings.moveSelection!, legalMoves);
