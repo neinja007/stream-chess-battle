@@ -7,7 +7,7 @@ import { useChessGame } from '@/hooks/useChessGame';
 import { testAndTransformMove } from '@/lib/test-transform-move';
 import { useEffect, useState, useCallback, useMemo } from 'react';
 import { findMove } from '@/lib/find-move';
-import { ArrowUpDown, Clock, Cog, Dices, Pause, Play, RotateCcw, Trash2 } from 'lucide-react';
+import { ArrowUpDown, Clock, Cog, Dices, Pause, Play, RotateCcw, Settings, Trash2 } from 'lucide-react';
 import { Button } from './ui/button';
 import Link from 'next/link';
 import { moveSelectionMap } from '@/data/move-selection-map';
@@ -75,7 +75,7 @@ export const Playing = ({ settings, setStatus }: PlayingProps) => {
 					/>
 				</div>
 			</div>
-			<div className='grid grid-rows-2 gap-4 h-[640px] w-56'>
+			<div className='grid grid-rows-2 gap-4 h-[640px] w-64'>
 				{activeOrientation !== 'white' && (
 					<Chat
 						activeTurn={turn === 'w'}
@@ -142,6 +142,9 @@ export const Playing = ({ settings, setStatus }: PlayingProps) => {
 					>
 						<ArrowUpDown /> Orientation: {orientation}
 					</Button>
+					<Button onClick={() => setStatus('settings')}>
+						<Settings /> Back to settings
+					</Button>
 				</div>
 				<hr className='w-full border-t border-blue-500 my-4' />
 				<div className='text-left w-full mb-2 text-lg'>Chat controls</div>
@@ -171,6 +174,10 @@ export const Playing = ({ settings, setStatus }: PlayingProps) => {
 				<div className='text-left w-full mb-2 flex items-center gap-1'>
 					<Cog className='size-4' />
 					Engine: <span className='font-bold'>Stockfish (Depth 15)</span>
+				</div>
+				<div className='text-left w-full mb-2 flex items-center gap-1'>
+					<Cog className='size-4' />
+					Vote restriction: <span className='font-bold'>1 Vote per user</span>
 				</div>
 			</div>
 		</div>
