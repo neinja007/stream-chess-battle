@@ -1,5 +1,6 @@
 import { processMove } from '@/lib/process-move';
 import { FrontendTwitchConnection } from '@/lib/frontend-twitch-connection';
+import { FrontendYouTubeConnection } from '@/lib/frontend-youtube-connection';
 import { useState, useEffect, useCallback, useRef } from 'react';
 
 type ChatStatus = 'active' | 'disconnected';
@@ -25,7 +26,7 @@ export const useChat = ({
 	const [moves, setMoves] = useState<Move[]>([]);
 	const [status, setStatus] = useState<ChatStatus>('disconnected');
 	const twitchConnectionRef = useRef<FrontendTwitchConnection | null>(null);
-	const eventSourceRef = useRef<EventSource | null>(null);
+	const youtubeConnectionRef = useRef<FrontendYouTubeConnection | null>(null);
 
 	const clear = useCallback((move?: string) => {
 		if (!move) {
@@ -46,37 +47,43 @@ export const useChat = ({
 				twitchConnectionRef.current.close();
 				twitchConnectionRef.current = null;
 			}
+			if (youtubeConnectionRef.current) {
+				youtubeConnectionRef.current.close();
+				youtubeConnectionRef.current = null;
+			}
 			setStatus('disconnected');
 			return;
 		}
 
-		if (info.platform !== 'twitch') {
-			const url = `/api/${info.platform}/chat${
-				info.channel === 'simulate' ? '/simulate' : ''
-			}?channel_id=${encodeURIComponent(info.channel)}`;
-			eventSourceRef.current = new EventSource(url);
+		if (info.platform === 'youtube') {
+			if (youtubeConnectionRef.current) {
+				youtubeConnectionRef.current.close();
+				youtubeConnectionRef.current = null;
+			}
 
-			setStatus('active');
-
-			eventSourceRef.current.addEventListener('message', (event: MessageEvent<string>) => {
-				try {
-					processMove(testAndTransformMove, JSON.parse(event.data), setMoves);
-				} catch (error) {
-					console.error('Error parsing message:', error);
-				}
+			const yt = new FrontendYouTubeConnection({
+				channel: info.channel,
+				apiKey: process.env.NEXT_PUBLIC_GCC_API_KEY ?? '',
+				onMessage: (message) => {
+					processMove(testAndTransformMove, message, setMoves);
+				},
+				onError: (error) => {
+					console.error('YouTube connection error:', error);
+					setStatus('disconnected');
+				},
+				onSystemMessage: (message) => {
+					console.log('YouTube system message:', message);
+				},
+				onConnect: () => setStatus('active'),
+				onDisconnect: () => setStatus('disconnected')
 			});
 
-			eventSourceRef.current.addEventListener('error', (event) => {
-				console.error('EventSource error:', event);
-				setStatus('disconnected');
-			});
-
-			eventSourceRef.current.onopen = () => {
-				setStatus('active');
-			};
+			youtubeConnectionRef.current = yt;
+			yt.connect();
 
 			return () => {
-				eventSourceRef.current?.close();
+				youtubeConnectionRef.current?.close();
+				youtubeConnectionRef.current = null;
 				setStatus('disconnected');
 			};
 		}
@@ -113,6 +120,10 @@ export const useChat = ({
 			if (twitchConnectionRef.current) {
 				twitchConnectionRef.current.close();
 				twitchConnectionRef.current = null;
+			}
+			if (youtubeConnectionRef.current) {
+				youtubeConnectionRef.current.close();
+				youtubeConnectionRef.current = null;
 			}
 			setStatus('disconnected');
 		};
