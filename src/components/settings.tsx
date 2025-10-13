@@ -9,6 +9,7 @@ import { Switch } from '@/components/ui/switch';
 import { ChartNoAxesColumnDecreasing, Dices, Save, Skull, User, Users, Weight } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { getSettingsCompletion } from '@/lib/settings-completion';
+import { useEffect, useState } from 'react';
 
 type SettingsProps = {
 	settings: SettingsType;
@@ -17,6 +18,14 @@ type SettingsProps = {
 };
 
 export const Settings = ({ settings, setSettings, setStatus }: SettingsProps) => {
+	const [youtubeApiKey, setYoutubeApiKey] = useState(
+		typeof window !== 'undefined' ? localStorage.getItem('youtubeApiKey') ?? '' : ''
+	);
+
+	useEffect(() => {
+		localStorage.setItem('youtubeApiKey', youtubeApiKey);
+	}, [youtubeApiKey]);
+
 	return (
 		<div className='w-full max-w-lg mx-auto pt-24 flex flex-col gap-4'>
 			<div>
@@ -105,6 +114,24 @@ export const Settings = ({ settings, setSettings, setStatus }: SettingsProps) =>
 					/>
 				</InputGroup>
 			</SettingsSection>
+			{settings.playerBlack.platform === 'youtube' ||
+				(settings.playerWhite.platform === 'youtube' && (
+					<SettingsSection
+						title='YouTube API key'
+						completed={typeof window !== 'undefined' && !!localStorage.getItem('youtubeApiKey')}
+						inline
+					>
+						<InputGroup>
+							<InputGroupInput
+								placeholder='YouTube API key'
+								value={youtubeApiKey}
+								onChange={(e) => {
+									setYoutubeApiKey(e.target.value);
+								}}
+							/>
+						</InputGroup>
+					</SettingsSection>
+				))}
 			<SettingsSection title='Time control' completed={!!settings.secondsPerMove} orientation='vertical' inline>
 				<Slider
 					value={[settings.secondsPerMove]}

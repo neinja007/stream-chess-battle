@@ -9,7 +9,6 @@ export const getSettingsCompletion = (settings: GameSettings): number => {
 		settings.playerBlack.channel !== '',
 		settings.secondsPerMove !== 0,
 		settings.voteRestriction !== undefined
-		// settings.evaluationBar !== undefined
 	];
 
 	const completion = settingsCompletion.filter(Boolean).length / settingsCompletion.length;
