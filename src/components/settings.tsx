@@ -114,25 +114,24 @@ export const Settings = ({ settings, setSettings, setStatus }: SettingsProps) =>
 					/>
 				</InputGroup>
 			</SettingsSection>
-			{settings.playerBlack.platform === 'youtube' ||
-				(settings.playerWhite.platform === 'youtube' && (
-					<SettingsSection
-						title='YouTube API key'
-						completed={typeof window !== 'undefined' && !!localStorage.getItem('youtubeApiKey')}
-						inline
-					>
-						<InputGroup>
-							<InputGroupInput
-								placeholder='YouTube API key'
-								value={youtubeApiKey}
-								onChange={(e) => {
-									setYoutubeApiKey(e.target.value);
-								}}
-								type='password'
-							/>
-						</InputGroup>
-					</SettingsSection>
-				))}
+			{(settings.playerBlack.platform === 'youtube' || settings.playerWhite.platform === 'youtube') && (
+				<SettingsSection
+					title='YouTube API key'
+					completed={typeof window !== 'undefined' && !!localStorage.getItem('youtubeApiKey')}
+					inline
+				>
+					<InputGroup>
+						<InputGroupInput
+							placeholder='YouTube API key'
+							value={youtubeApiKey}
+							onChange={(e) => {
+								setYoutubeApiKey(e.target.value);
+							}}
+							type='password'
+						/>
+					</InputGroup>
+				</SettingsSection>
+			)}
 			<SettingsSection title='Time control' completed={!!settings.secondsPerMove} orientation='vertical' inline>
 				<Slider
 					value={[settings.secondsPerMove]}

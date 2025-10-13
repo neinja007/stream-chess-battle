@@ -10,7 +10,7 @@ type SimpleSelectProps = {
 
 export const SimpleSelect = ({ value, onChange, options, placeholder }: SimpleSelectProps) => {
 	return (
-		<Select value={value} onValueChange={onChange}>
+		<Select value={value ?? undefined} onValueChange={onChange}>
 			<SelectTrigger>
 				<SelectValue placeholder={placeholder} />
 			</SelectTrigger>
