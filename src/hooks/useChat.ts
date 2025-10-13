@@ -50,7 +50,6 @@ export const useChat = ({
 			return;
 		}
 
-		// Always close any existing connection before creating a new one
 		if (connectionRef.current) {
 			connectionRef.current.close();
 			connectionRef.current = null;
