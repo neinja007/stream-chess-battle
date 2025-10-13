@@ -25,8 +25,7 @@ export const useChat = ({
 }) => {
 	const [moves, setMoves] = useState<Move[]>([]);
 	const [status, setStatus] = useState<ChatStatus>('disconnected');
-	const twitchConnectionRef = useRef<FrontendTwitchConnection | null>(null);
-	const youtubeConnectionRef = useRef<FrontendYouTubeConnection | null>(null);
+	const connectionRef = useRef<FrontendTwitchConnection | FrontendYouTubeConnection | null>(null);
 
 	const clear = useCallback((move?: string) => {
 		if (!move) {
@@ -43,24 +42,21 @@ export const useChat = ({
 		}
 
 		if (!enable) {
-			if (twitchConnectionRef.current) {
-				twitchConnectionRef.current.close();
-				twitchConnectionRef.current = null;
-			}
-			if (youtubeConnectionRef.current) {
-				youtubeConnectionRef.current.close();
-				youtubeConnectionRef.current = null;
+			if (connectionRef.current) {
+				connectionRef.current.close();
+				connectionRef.current = null;
 			}
 			setStatus('disconnected');
 			return;
 		}
 
-		if (info.platform === 'youtube') {
-			if (youtubeConnectionRef.current) {
-				youtubeConnectionRef.current.close();
-				youtubeConnectionRef.current = null;
-			}
+		// Always close any existing connection before creating a new one
+		if (connectionRef.current) {
+			connectionRef.current.close();
+			connectionRef.current = null;
+		}
 
+		if (info.platform === 'youtube') {
 			const yt = new FrontendYouTubeConnection({
 				channel: info.channel,
 				apiKey: process.env.NEXT_PUBLIC_GCC_API_KEY ?? '',
@@ -78,19 +74,14 @@ export const useChat = ({
 				onDisconnect: () => setStatus('disconnected')
 			});
 
-			youtubeConnectionRef.current = yt;
+			connectionRef.current = yt;
 			yt.connect();
 
 			return () => {
-				youtubeConnectionRef.current?.close();
-				youtubeConnectionRef.current = null;
+				connectionRef.current?.close();
+				connectionRef.current = null;
 				setStatus('disconnected');
 			};
-		}
-
-		if (twitchConnectionRef.current) {
-			twitchConnectionRef.current.close();
-			twitchConnectionRef.current = null;
 		}
 
 		const twitchConnection = new FrontendTwitchConnection({
@@ -113,17 +104,13 @@ export const useChat = ({
 			}
 		});
 
-		twitchConnectionRef.current = twitchConnection;
+		connectionRef.current = twitchConnection;
 		twitchConnection.connect();
 
 		return () => {
-			if (twitchConnectionRef.current) {
-				twitchConnectionRef.current.close();
-				twitchConnectionRef.current = null;
-			}
-			if (youtubeConnectionRef.current) {
-				youtubeConnectionRef.current.close();
-				youtubeConnectionRef.current = null;
+			if (connectionRef.current) {
+				connectionRef.current.close();
+				connectionRef.current = null;
 			}
 			setStatus('disconnected');
 		};
@@ -131,8 +118,8 @@ export const useChat = ({
 
 	useEffect(() => {
 		return () => {
-			if (twitchConnectionRef.current) {
-				twitchConnectionRef.current.close();
+			if (connectionRef.current) {
+				connectionRef.current.close();
 			}
 		};
 	}, []);
