@@ -128,6 +128,7 @@ export const Settings = ({ settings, setSettings, setStatus }: SettingsProps) =>
 								onChange={(e) => {
 									setYoutubeApiKey(e.target.value);
 								}}
+								type='password'
 							/>
 						</InputGroup>
 					</SettingsSection>
