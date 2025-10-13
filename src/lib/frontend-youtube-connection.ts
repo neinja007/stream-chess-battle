@@ -5,7 +5,6 @@ export interface YouTubeMessage {
 
 export interface FrontendYouTubeConnectionOptions {
 	channel: string;
-	apiKey: string;
 	onMessage: (message: YouTubeMessage) => void;
 	onError: (error: string) => void;
 	onSystemMessage?: (message: string) => void;
@@ -25,17 +24,16 @@ export class FrontendYouTubeConnection {
 
 	constructor(options: FrontendYouTubeConnectionOptions) {
 		this.options = options;
-		this.apiKey = options.apiKey;
+		this.apiKey = typeof window !== 'undefined' ? localStorage.getItem('youtubeApiKey') ?? '' : '';
+		if (this.apiKey === '') {
+			this.options.onError('Missing API key for YouTube API');
+			return;
+		}
 	}
 
 	connect(): void {
 		if (!this.options.channel || this.options.channel.trim() === '') {
 			this.options.onError('YouTube channel is required');
-			return;
-		}
-
-		if (!this.apiKey) {
-			this.options.onError('Missing API key for YouTube API');
 			return;
 		}
 

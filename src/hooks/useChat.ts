@@ -58,8 +58,8 @@ export const useChat = ({
 		if (info.platform === 'youtube') {
 			const yt = new FrontendYouTubeConnection({
 				channel: info.channel,
-				apiKey: process.env.NEXT_PUBLIC_GCC_API_KEY ?? '',
 				onMessage: (message) => {
+					console.log('YouTube message:', message);
 					processMove(testAndTransformMove, message, setMoves);
 				},
 				onError: (error) => {
