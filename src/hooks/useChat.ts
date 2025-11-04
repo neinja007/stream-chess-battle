@@ -29,43 +29,61 @@ export const useChat = ({
 	const [moves, setMoves] = useState<Move[]>([]);
 	const [status, setStatus] = useState<ChatStatus>('disconnected');
 	const connectionRef = useRef<FrontendTwitchConnection | FrontendYouTubeConnection | null>(null);
+	const movesRef = useRef<Move[]>([]);
 
 	const clear = useCallback((move?: string) => {
 		if (!move) {
 			setMoves([]);
+			movesRef.current = [];
 			return;
 		}
-		setMoves((prev) => prev.filter((m) => m.move !== move));
+		setMoves((prev) => {
+			const filtered = prev.filter((m) => m.move !== move);
+			movesRef.current = filtered;
+			return filtered;
+		});
 	}, []);
 
 	const connectionHandler: FrontendYouTubeConnectionOptions | FrontendTwitchConnectionOptions = useMemo(
 		() => ({
 			channel: info.channel,
 			onMessage: (message) => {
-				if (voteRestriction === '1VotePerUser' && moves.some((m) => m.user === message.user)) {
+				const currentMoves = movesRef.current;
+				if (voteRestriction === '1VotePerUser' && currentMoves.some((m) => m.user === message.user)) {
 					return;
 				} else if (
 					voteRestriction === 'uniqueVotesPerUser' &&
-					moves.some(
+					currentMoves.some(
 						(m) => testAndTransformMove(m.move) === testAndTransformMove(message.text) && m.user === message.user
 					)
 				) {
 					return;
 				}
-				processMove(testAndTransformMove, message, setMoves);
+				processMove(testAndTransformMove, message, (updater) => {
+					setMoves((prev) => {
+						const next = typeof updater === 'function' ? updater(prev) : updater;
+						movesRef.current = next;
+						return next;
+					});
+				});
 			},
 			onError: (error) => {
-				console.error('YouTube connection error:', error);
+				console.error('Connection error:', error);
 				setStatus('disconnected');
 			},
 			onSystemMessage: (message) => {
-				console.log('YouTube system message:', message);
+				console.log('System message:', message);
 			},
 			onConnect: () => setStatus('active'),
 			onDisconnect: () => setStatus('disconnected')
 		}),
-		[info.channel, moves, testAndTransformMove, voteRestriction]
+		[info.channel, testAndTransformMove, voteRestriction]
 	);
+
+	// Keep movesRef in sync with moves state
+	useEffect(() => {
+		movesRef.current = moves;
+	}, [moves]);
 
 	useEffect(() => {
 		if (!info.channel || info.platform === 'self') {
@@ -107,7 +125,7 @@ export const useChat = ({
 			}
 			setStatus('disconnected');
 		};
-	}, [info, enable, testAndTransformMove, voteRestriction, connectionHandler]);
+	}, [info, enable, connectionHandler]);
 
 	useEffect(() => {
 		return () => {
