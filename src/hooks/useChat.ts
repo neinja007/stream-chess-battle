@@ -1,7 +1,8 @@
 import { processMove } from '@/lib/process-move';
-import { FrontendTwitchConnection } from '@/lib/frontend-twitch-connection';
-import { FrontendYouTubeConnection } from '@/lib/frontend-youtube-connection';
-import { useState, useEffect, useCallback, useRef } from 'react';
+import { FrontendTwitchConnection, FrontendTwitchConnectionOptions } from '@/lib/frontend-twitch-connection';
+import { FrontendYouTubeConnection, FrontendYouTubeConnectionOptions } from '@/lib/frontend-youtube-connection';
+import { useState, useEffect, useCallback, useRef, useMemo } from 'react';
+import { VoteRestriction } from '@/types/settings';
 
 type ChatStatus = 'active' | 'disconnected';
 
@@ -14,7 +15,8 @@ export type Move = {
 export const useChat = ({
 	enable,
 	testAndTransformMove,
-	info
+	info,
+	voteRestriction
 }: {
 	info: {
 		platform: 'twitch' | 'youtube' | 'self';
@@ -22,6 +24,7 @@ export const useChat = ({
 	};
 	enable: boolean;
 	testAndTransformMove: (move: string) => string | undefined;
+	voteRestriction: VoteRestriction;
 }) => {
 	const [moves, setMoves] = useState<Move[]>([]);
 	const [status, setStatus] = useState<ChatStatus>('disconnected');
@@ -34,6 +37,35 @@ export const useChat = ({
 		}
 		setMoves((prev) => prev.filter((m) => m.move !== move));
 	}, []);
+
+	const connectionHandler: FrontendYouTubeConnectionOptions | FrontendTwitchConnectionOptions = useMemo(
+		() => ({
+			channel: info.channel,
+			onMessage: (message) => {
+				if (voteRestriction === '1VotePerUser' && moves.some((m) => m.user === message.user)) {
+					return;
+				} else if (
+					voteRestriction === 'uniqueVotesPerUser' &&
+					moves.some(
+						(m) => testAndTransformMove(m.move) === testAndTransformMove(message.text) && m.user === message.user
+					)
+				) {
+					return;
+				}
+				processMove(testAndTransformMove, message, setMoves);
+			},
+			onError: (error) => {
+				console.error('YouTube connection error:', error);
+				setStatus('disconnected');
+			},
+			onSystemMessage: (message) => {
+				console.log('YouTube system message:', message);
+			},
+			onConnect: () => setStatus('active'),
+			onDisconnect: () => setStatus('disconnected')
+		}),
+		[info.channel, moves, testAndTransformMove, voteRestriction]
+	);
 
 	useEffect(() => {
 		if (!info.channel || info.platform === 'self') {
@@ -55,56 +87,18 @@ export const useChat = ({
 			connectionRef.current = null;
 		}
 
+		let connection: FrontendTwitchConnection | FrontendYouTubeConnection | null = null;
+
 		if (info.platform === 'youtube') {
-			const yt = new FrontendYouTubeConnection({
-				channel: info.channel,
-				onMessage: (message) => {
-					console.log('YouTube message:', message);
-					processMove(testAndTransformMove, message, setMoves);
-				},
-				onError: (error) => {
-					console.error('YouTube connection error:', error);
-					setStatus('disconnected');
-				},
-				onSystemMessage: (message) => {
-					console.log('YouTube system message:', message);
-				},
-				onConnect: () => setStatus('active'),
-				onDisconnect: () => setStatus('disconnected')
-			});
+			connection = new FrontendYouTubeConnection(connectionHandler as FrontendYouTubeConnectionOptions);
 
-			connectionRef.current = yt;
-			yt.connect();
-
-			return () => {
-				connectionRef.current?.close();
-				connectionRef.current = null;
-				setStatus('disconnected');
-			};
+			connectionRef.current = connection;
+			connection.connect();
 		}
 
-		const twitchConnection = new FrontendTwitchConnection({
-			channel: info.channel,
-			onMessage: (message) => {
-				processMove(testAndTransformMove, message, setMoves);
-			},
-			onError: (error) => {
-				console.error('Twitch connection error:', error);
-				setStatus('disconnected');
-			},
-			onSystemMessage: (message) => {
-				console.log('Twitch system message:', message);
-			},
-			onConnect: () => {
-				setStatus('active');
-			},
-			onDisconnect: () => {
-				setStatus('disconnected');
-			}
-		});
+		connection = new FrontendTwitchConnection(connectionHandler as FrontendTwitchConnectionOptions);
 
-		connectionRef.current = twitchConnection;
-		twitchConnection.connect();
+		connection.connect();
 
 		return () => {
 			if (connectionRef.current) {
@@ -113,7 +107,7 @@ export const useChat = ({
 			}
 			setStatus('disconnected');
 		};
-	}, [info, enable, testAndTransformMove]);
+	}, [info, enable, testAndTransformMove, voteRestriction, connectionHandler]);
 
 	useEffect(() => {
 		return () => {

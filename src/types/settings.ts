@@ -4,8 +4,10 @@ export type GameSettings = {
 	playerBlack: Player;
 	secondsPerMove: number;
 	evaluationBar: 'show' | 'hide' | undefined;
-	voteRestriction: 'noRestriction' | '1VotePerUser' | 'uniqueVotesPerUser' | undefined;
+	voteRestriction: VoteRestriction | undefined;
 };
+
+export type VoteRestriction = 'noRestriction' | '1VotePerUser' | 'uniqueVotesPerUser';
 
 export type PlaySettings = {
 	theme: 'standard' | 'blue-purple';

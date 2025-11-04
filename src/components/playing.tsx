@@ -30,12 +30,14 @@ export const Playing = ({ settings, setStatus }: PlayingProps) => {
 
 	const whiteChat = useChat({
 		info: settings.playerWhite as PlayerInfo,
+		voteRestriction: settings.voteRestriction!,
 		enable: activeTurnWhite && !result,
 		testAndTransformMove: testAndTransformMoveFunction
 	});
 
 	const blackChat = useChat({
 		info: settings.playerBlack as PlayerInfo,
+		voteRestriction: settings.voteRestriction!,
 		enable: !activeTurnWhite && !result,
 		testAndTransformMove: testAndTransformMoveFunction
 	});
